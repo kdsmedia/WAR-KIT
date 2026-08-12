@@ -1,5 +1,53 @@
 # WAR-KIT
 
+**Idle Warung Indonesia** — game simulasi idle mengelola warung menjadi jaringan terbesar di Indonesia.
+
+| Item | Keterangan |
+|------|-----------|
+| Nama Aplikasi | **WAR-KIT** |
+| Package Name | `com.altomedia.warkit` |
+| Developer | **ALTOMEDIA** |
+| Contact | altomediaindonesia@gmail.com |
+| Platform | Android 2D (native Kotlin + Canvas) |
+| minSdk | 21 (Android 5.0) |
+| targetSdk | 37 |
+
+## Build
+
+```bash
+./gradlew assembleDebug
+# Output: app/build/outputs/apk/debug/app-debug.apk
+```
+
+## Struktur Proyek
+
+```
+app/src/main/java/com/altomedia/warkit/
+├── core/      GameState, CustomerSpawner, SaveManager
+├── data/      ProductCatalog, ShelfConfig, MissionBank
+├── game/      GameEngine, GameView (Canvas 2D), CircleButton
+├── model/     Product, Customer, SellerCharacter, Mission
+└── ui/        MainActivity, dialogs (Intro, Character, Warehouse, Upgrade, Product, Mission)
+```
+
+## Fitur (GDD BAB 1–10)
+
+- **BAB 1–2**: Intro cerita, kondisi awal (Rp500.000, 2 rak, 5 produk), tombol Buka Warung
+- **BAB 3**: AI pelanggan (kecepatan, daftar belanja, kesabaran, kepuasan)
+- **BAB 4**: Sistem stok & gudang, beli dari supplier, isi rak
+- **BAB 5**: Keuntungan + pendapatan idle (kasir bekerja walau offline)
+- **BAB 6**: Upgrade rak (kapasitas, estetika, reputasi; visual kayu→besi)
+- **BAB 7**: 5 tipe pelanggan (Ibu RT, anak sekolah, ojol, petani, karyawan) + VIP
+- **BAB 8**: Sistem level & unlock (produk, rak, pegawai, dekorasi, cabang)
+- **BAB 9**: Misi utama & harian dengan reward (uang, diamond, EXP, booster, chest)
+- **BAB 10**: Transisi warung dikenal
+
+## Karakter Penjual
+
+Bu Sari, Andi, Pak Budi, Nek Wati — masing-masing dengan bonus pasif unik.
+
+---
+
 
 INTRODUCTION KARAKTER PENJUAL
 

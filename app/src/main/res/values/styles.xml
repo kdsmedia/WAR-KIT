@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.WarKit" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@color/warkit_bg</item>
+        <item name="colorPrimary">@color/warkit_primary</item>
+        <item name="colorPrimaryDark">@color/warkit_primary_dark</item>
+        <item name="colorAccent">@color/warkit_accent</item>
+    </style>
+
+    <style name="Theme.WarKit.Fullscreen" parent="Theme.WarKit">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:statusBarColor">@color/warkit_panel_dark</item>
+    </style>
+</resources>
