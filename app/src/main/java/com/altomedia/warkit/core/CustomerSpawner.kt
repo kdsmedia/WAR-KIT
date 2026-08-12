@@ -84,8 +84,8 @@ class CustomerSpawner(private val state: GameState) {
             speed = speed,
             patience = finalPatience,
             satisfaction = Satisfaction.SANGAT_PUAS,
-            x = -30f,
-            y = 300f,
+            x = -40f,
+            y = 0f, // akan diperbaiki GameEngine.configure() ke posisi masuk portrait
             phase = Customer.Phase.ENTERING,
             isVip = isVip
         ).also { it.bill = 0 }

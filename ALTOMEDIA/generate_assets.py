@@ -88,31 +88,40 @@ def draw_customer(d, x, y, color=GREEN, size=20):
     d.ellipse([x - size//4, y + r*2, x + r*2 + size//4, y + r*2 + size], fill=color)  # body
 
 # ============================================================
-# 1. APP ICON 512x512
+# 1. APP ICON 512x512 (modern flat warung, sesuai vector launcher)
 # ============================================================
 def gen_icon():
     img = Image.new("RGBA", (512, 512), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
-    # Background gradient circle
-    cx, cy = 256, 256
-    for r in range(256, 0, -2):
-        t = r / 256
-        col = (
-            int(253 * t + 255 * (1-t)),
-            int(246 * t + 243 * (1-t)),
-            int(227 * t + 224 * (1-t)),
-            255
-        )
-        d.ellipse([cx-r, cy-r, cx+r, cy+r], fill=col)
-    # Warung building di tengah
-    draw_warung_building(d, 96, 140, 320, 260, scale=3.0)
-    # Embel "WARKIT" kecil di bawah
-    d.rectangle([130, 380, 382, 440], fill=ROOF_DARK)
-    f = font(54, bold=True)
-    text = "WARKIT"
-    bbox = d.textbbox((0, 0), text, font=f)
-    tw = bbox[2] - bbox[0]
-    d.text((256 - tw//2, 388), text, fill=WHITE, font=f)
+    # Background solid cream (modern, minimal — sesuai ic_launcher_background)
+    bg = (253, 246, 227, 255)
+    d.rounded_rectangle([0, 0, 511, 511], radius=0, fill=bg)
+    # Body warung (rounded)
+    body_c = (253, 246, 227)
+    d.rounded_rectangle([132, 208, 380, 408], radius=18, fill=body_c, outline=WOOD, width=4)
+    # Atap (kanopi bergaris)
+    aw_c = ROOF
+    d.rounded_rectangle([114, 168, 398, 208], radius=20, fill=aw_c)
+    # Garis atap
+    for i in range(4):
+        x0 = 114 + i * 72
+        d.polygon([(x0, 168), (x0 + 36, 208), (x0 - 14, 208), (x0 - 14, 168)], fill=ROOF_DARK)
+    # Papan nama
+    d.rounded_rectangle([190, 220, 302, 260], radius=4, fill=(62, 44, 28))
+    d.rounded_rectangle([210, 240, 282, 252], fill=GOLD)
+    # Pintu
+    d.rounded_rectangle([226, 300, 286, 408], radius=6, fill=WOOD)
+    d.rounded_rectangle([236, 312, 276, 380], fill=(161, 136, 127))
+    # Handle
+    d.ellipse([266, 340, 276, 352], fill=GOLD)
+    # Jendela kiri/kanan
+    d.rounded_rectangle([162, 300, 210, 372], radius=4, fill=(179, 225, 255))
+    d.rounded_rectangle([302, 300, 350, 372], radius=4, fill=(179, 225, 255))
+    # Frame jendela
+    d.line([(186, 300), (186, 372)], fill=WHITE, width=3)
+    d.line([(162, 336), (210, 336)], fill=WHITE, width=3)
+    d.line([(326, 300), (326, 372)], fill=WHITE, width=3)
+    d.line([(302, 336), (350, 336)], fill=WHITE, width=3)
     img.save(os.path.join(OUT, "ic_launcher_512.png"))
     # Versi round
     mask = Image.new("L", (512, 512), 0)
@@ -120,7 +129,7 @@ def gen_icon():
     round_icon = Image.new("RGBA", (512, 512), (0,0,0,0))
     round_icon.paste(img, (0,0), mask)
     round_icon.save(os.path.join(OUT, "ic_launcher_round_512.png"))
-    print("OK ic_launcher_512.png, ic_launcher_round_512.png")
+    print("OK ic_launcher_512.png, ic_launcher_round_512.png (modern flat)")
 
 # ============================================================
 # 2. FEATURE GRAPHIC 1024x500

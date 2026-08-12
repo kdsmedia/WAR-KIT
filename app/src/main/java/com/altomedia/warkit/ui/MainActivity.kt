@@ -5,11 +5,14 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.GridLayout
+import android.widget.HorizontalScrollView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.altomedia.warkit.R
+import com.altomedia.warkit.audio.MusicManager
 import com.altomedia.warkit.core.GameState
 import com.altomedia.warkit.core.SaveManager
 import com.altomedia.warkit.game.CircleButton
@@ -17,9 +20,9 @@ import com.altomedia.warkit.game.GameEngine
 import com.altomedia.warkit.game.GameView
 
 /**
- * Activity utama. Menggabungkan GameView (Canvas 2D) + overlay tombol aksi
- * + HUD. Mengatur save/load, intro cerita, pemilihan karakter, pendapatan
- * idle offline, dan transisi hari.
+ * Activity utama. Menggabungkan GameView (Canvas 2D portrait) + overlay tombol
+ * aksi modern + HUD. Mengatur save/load, intro cerita, pemilihan karakter,
+ * pendapatan idle offline, transisi hari, dan musik latar.
  */
 class MainActivity : AppCompatActivity() {
 
@@ -27,6 +30,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var engine: GameEngine
     private lateinit var gameView: GameView
     private lateinit var save: SaveManager
+    private var music: MusicManager? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +42,8 @@ class MainActivity : AppCompatActivity() {
         engine = GameEngine(state)
         gameView.state = state
         gameView.engine = engine
+
+        music = MusicManager(this)
 
         state.onLevelUp = { lvl ->
             runOnUiThread {
@@ -77,44 +83,49 @@ class MainActivity : AppCompatActivity() {
     private fun buildLayout(): FrameLayout {
         val root = FrameLayout(this)
 
-        // Lapisan game
+        // Lapisan game (portrait, penuh)
         root.addView(gameView, FrameLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.MATCH_PARENT
         ))
 
-        // Lapisan tombol aksi (bawah-kiri)
+        // Panel tombol aksi — strip horizontal scrollable di bagian bawah (modern)
+        val barHeight = 150
+        val scroll = HorizontalScrollView(this).apply {
+            isHorizontalScrollBarEnabled = false
+            setPadding(10, 6, 10, 10)
+            setBackgroundColor(0xCC3E2C1C.toInt())
+        }
         val btnBar = LinearLayout(this).apply {
             orientation = LinearLayout.HORIZONTAL
-            setPadding(16, 16, 16, 16)
         }
-        val btnSize = 140
-        btnBar.addView(actionBtn("🏪", "Gudang", 0xFFE76F51.toInt()) { openWarehouse() })
-        btnBar.addView(actionBtn("⬆️", "Upgrade", 0xFF6D4C41.toInt()) { openUpgrade() })
-        btnBar.addView(actionBtn("🧑‍💼", "Pegawai", 0xFF1E88E5.toInt()) { openEmployees() })
-        btnBar.addView(actionBtn("🎨", "Dekorasi", 0xFF8E24AA.toInt()) { openDecorations() })
-        btnBar.addView(actionBtn("🛒", "Produk", 0xFFF4A261.toInt()) { openProducts() })
-        btnBar.addView(actionBtn("🎯", "Misi", 0xFF43A047.toInt()) { openMissions() })
-        btnBar.addView(actionBtn("🗺️", "Cabang", 0xFF00897B.toInt()) { openBranches() })
-        btnBar.addView(actionBtn("⚙️", "Operasional", 0xFF5C6BC0.toInt()) { openOperations() })
-        btnBar.addView(actionBtn("💼", "Bisnis", 0xFF8D6E63.toInt()) { openBusiness() })
-        btnBar.addView(actionBtn("📅", "Event", 0xFFE53935.toInt()) { openEvents() })
-        btnBar.addView(actionBtn("🇮🇩", "Provinsi", 0xFF00ACC1.toInt()) { openProvinces() })
-        btnBar.addView(actionBtn("💳", "Modern", 0xFFAB47BC.toInt()) { openModern() })
-        btnBar.addView(actionBtn("🏆", "Prestasi", 0xFFFFA000.toInt()) { openAchievements() })
-        val btnLp = FrameLayout.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            btnSize + 24
+        val btnSize = 132
+        btnBar.addView(actionBtn("🏪", "Gudang", 0xFFE76F51.toInt()) { openWarehouse() }, btnSize)
+        btnBar.addView(actionBtn("⬆️", "Upgrade", 0xFF6D4C41.toInt()) { openUpgrade() }, btnSize)
+        btnBar.addView(actionBtn("🧑‍💼", "Pegawai", 0xFF1E88E5.toInt()) { openEmployees() }, btnSize)
+        btnBar.addView(actionBtn("🎨", "Dekorasi", 0xFF8E24AA.toInt()) { openDecorations() }, btnSize)
+        btnBar.addView(actionBtn("🛒", "Produk", 0xFFF4A261.toInt()) { openProducts() }, btnSize)
+        btnBar.addView(actionBtn("🎯", "Misi", 0xFF43A047.toInt()) { openMissions() }, btnSize)
+        btnBar.addView(actionBtn("🗺️", "Cabang", 0xFF00897B.toInt()) { openBranches() }, btnSize)
+        btnBar.addView(actionBtn("⚙️", "Operasional", 0xFF5C6BC0.toInt()) { openOperations() }, btnSize)
+        btnBar.addView(actionBtn("💼", "Bisnis", 0xFF8D6E63.toInt()) { openBusiness() }, btnSize)
+        btnBar.addView(actionBtn("📅", "Event", 0xFFE53935.toInt()) { openEvents() }, btnSize)
+        btnBar.addView(actionBtn("🇮🇩", "Provinsi", 0xFF00ACC1.toInt()) { openProvinces() }, btnSize)
+        btnBar.addView(actionBtn("💳", "Modern", 0xFFAB47BC.toInt()) { openModern() }, btnSize)
+        btnBar.addView(actionBtn("🏆", "Prestasi", 0xFFFFA000.toInt()) { openAchievements() }, btnSize)
+        scroll.addView(btnBar)
+        val scrollLp = FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT, barHeight
         ).apply { gravity = Gravity.BOTTOM or Gravity.START }
-        root.addView(btnBar, btnLp)
+        root.addView(scroll, scrollLp)
 
-        // Tombol Buka/Tutup Warung (kanan-bawah) - BAB 2
-        val openBtn = actionBtn("🟢", "Buka Warung", 0xFF43A047.toInt()) {
+        // Tombol Buka/Tutup Warung (kanan-atas, di bawah HUD) - BAB 2
+        val openBtn = actionBtn("🟢", "Buka", 0xFF43A047.toInt()) {
             if (state.shopOpen) { state.closeShop() } else { state.openShop(); gameView.resetTimer() }
             refreshOpenBtnLabel()
         }.apply { id = View.generateViewId() }
-        val openLp = FrameLayout.LayoutParams(160, 160).apply {
-            gravity = Gravity.BOTTOM or Gravity.END; rightMargin = 24; bottomMargin = 24
+        val openLp = FrameLayout.LayoutParams(132, 132).apply {
+            gravity = Gravity.TOP or Gravity.END; topMargin = 108; rightMargin = 12
         }
         root.addView(openBtn, openLp)
 
@@ -127,18 +138,23 @@ class MainActivity : AppCompatActivity() {
     ): CircleButton {
         val b = CircleButton(this, icon, color) { onClick() }
         b.label = label
-        val lp = LinearLayout.LayoutParams(0, 140, 1f).apply {
-            gravity = Gravity.CENTER; rightMargin = 12; leftMargin = 12
+        if (label == "Buka") openBtnRef = b
+        return b
+    }
+
+    private fun actionBtn(icon: String, label: String, color: Int, onClick: () -> Unit, size: Int): CircleButton {
+        val b = actionBtn(icon, label, color, onClick)
+        val lp = LinearLayout.LayoutParams(size, size).apply {
+            gravity = Gravity.CENTER; rightMargin = 10; leftMargin = 10
         }
         b.layoutParams = lp
-        if (label == "Buka Warung") openBtnRef = b
         return b
     }
 
     private fun refreshOpenBtnLabel() {
         // refresh label tombol buka/tutup
         (openBtnRef as? CircleButton)?.let {
-            it.label = if (state.shopOpen) "Tutup Warung" else "Buka Warung"
+            it.label = if (state.shopOpen) "Tutup" else "Buka"
             it.invalidate()
         }
     }
@@ -257,11 +273,13 @@ class MainActivity : AppCompatActivity() {
         super.onPause()
         state.closeShop()
         save.save(state)
+        music?.pause()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         dayHandler.removeCallbacks(dayRunnable)
+        music?.release()
     }
 
     override fun onResume() {
@@ -270,5 +288,6 @@ class MainActivity : AppCompatActivity() {
             state.openShop()
             gameView.resetTimer()
         }
+        music?.start()
     }
 }

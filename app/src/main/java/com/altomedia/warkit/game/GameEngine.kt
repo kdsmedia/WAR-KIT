@@ -19,17 +19,22 @@ class GameEngine(val state: GameState) {
     val spawner = CustomerSpawner(state)
     private var spawnTimer = 0f
 
-    // Posisi-posisi penting di scene (dinormalisasi relatif lebar layar)
+    // Posisi-posisi penting di scene (dinormalisasi relatif lebar/tinggi layar portrait)
     var cashierX = 0f
     var cashierY = 0f
     var shelfY = 0f
     var exitX = 0f
+    var enterX = 0f
+    var queueY = 0f
 
     fun configure(width: Float, height: Float) {
-        cashierX = width * 0.72f
-        cashierY = height * 0.62f
+        // Layout portrait: rak di atas, kasir di tengah-bawah, antrean vertikal di kanan
+        cashierX = width * 0.34f
+        cashierY = height * 0.60f
         shelfY = height * 0.30f
-        exitX = -40f
+        exitX = -50f
+        enterX = width * 0.5f
+        queueY = height * 0.78f
     }
 
     /** Update tiap frame. dt = detik. */
@@ -60,8 +65,12 @@ class GameEngine(val state: GameState) {
     private fun updateCustomer(c: Customer, dt: Float) {
         when (c.phase) {
             Customer.Phase.ENTERING -> {
-                c.x += c.speed * dt
-                if (c.x >= shelfY * 0.4f) {  // sampai area rak
+                // Masuk dari pintu bawah, berjalan ke depan rak (tengah-atas scene)
+                if (c.x < cashierX) c.x += c.speed * dt
+                val targetY = shelfY + 40f
+                if (c.y < targetY) c.y += c.speed * dt
+                if (c.y >= targetY) {
+                    c.y = targetY
                     c.phase = Customer.Phase.PICKING
                     c.waited = 0f
                 }
@@ -95,11 +104,11 @@ class GameEngine(val state: GameState) {
                 }
             }
             Customer.Phase.QUEUING -> {
-                // bergerak ke kasir
+                // bergerak ke kasir (tengah-bawah)
                 val dx = cashierX - c.x
                 val dy = cashierY - c.y
                 val dist = Math.hypot(dx.toDouble(), dy.toDouble()).toFloat()
-                if (dist < 5f) {
+                if (dist < 8f) {
                     c.phase = Customer.Phase.PAYING
                     c.waited = 0f
                 } else {
@@ -121,8 +130,9 @@ class GameEngine(val state: GameState) {
                 }
             }
             Customer.Phase.LEAVING -> {
-                c.x -= c.speed * dt * 1.5f
-                if (c.x <= exitX) c.phase = Customer.Phase.DONE
+                // Keluar lewat pintu bawah
+                c.y += c.speed * dt * 1.5f
+                if (c.y >= queueY + 120f) c.phase = Customer.Phase.DONE
             }
             Customer.Phase.DONE -> { /* dihapus */ }
         }

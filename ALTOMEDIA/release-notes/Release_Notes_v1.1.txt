@@ -1,0 +1,57 @@
+================================================================================
+                 CATATAN RILIS (RELEASE NOTES) — WARKIT v1.1
+================================================================================
+Aplikasi: WARKIT — Idle Warung Indonesia
+Package: com.altomedia.warkit
+Versi: 1.1 (versionCode 2)
+Tanggal: 12 Agustus 2026
+Developer: ALTOMEDIA
+================================================================================
+
+PEMBAHARUAN v1.1 — MODE POTRET & UI 2D MODERN:
+
+🎨 TATA LETAK & ORIENTASI:
+• Orientasi diubah dari LANDSCAPE → PORTRAIT (sesuai gameplay mobile)
+• Tata letak menu & tombol aksi disesuaikan untuk portrait (strip horizontal
+  scrollable di bawah, tombol Buka/Tutup mengambang kanan-atas)
+• HUD modern dengan kartu (card style) rounded, gradient, dan bayangan lembut
+
+🖼️ GRAFIK 2D MODERN:
+• Scene warung 2D modern: langit gradien hangat, awan flat, dinding aksen,
+  lantai gradien kayu dengan ubin perspektif
+• Pintu kaca modern & meja kasir dengan etalase + mesin kasir
+• Rak produk rounded-rect modern dengan label kecil
+• Karakter pelanggan 2D animasi (kepala, rambut, badan rounded, tangan saat
+  memilih barang, bayangan, badge VIP, emoji tipe, bar kesabaran, daftar
+  belanja) — bobbing animation saat berjalan
+• Ikon launcher 2D flat modern (warung dengan kanopi bergaris, papan nama,
+  pintu & jendela dengan frame) — background solid minimal tanpa gradient ramai
+
+🎵 MUSIK LATAR:
+• Ditambahkan musik latar (BGM) loop 20 detik bernuansa pentatonic hangat
+  (melodi + bass + pad) — game tidak lagi senyap
+• Volume lembut (35%), loop mulus, dijeda saat app pause & dilanjutkan saat resume
+• Resource: res/raw/bgm.wav (mono 22kHz, ~900KB)
+
+🔧 TEKNIS:
+• Naikkan versionCode 1 → 2, versionName 1.0 → 1.1
+• GameEngine: posisi portrait (rak atas, kasir kiri-tengah, pintu bawah)
+• Movement pelanggan disesuaikan: masuk dari pintu bawah → naik ke rak →
+  ke kasir → bayar → keluar pintu bawah
+• Tidak ada bug/error compile
+• Tidak ada dummy/simulasi/placeholder
+
+✅ KOMPATIBEL:
+• Android 5.0 (API 21) ke atas
+• Portrait mode
+• Offline, dengan musik latar
+• Signed ALTOMEDIA.jks (V2 signer)
+
+Terima kasih telah bermain WARKIT! Nikmati tampilan baru yang lebih modern
+dan profesional, kini dalam mode potret yang nyaman untuk mobile.
+
+— Tim ALTOMEDIA
+
+================================================================================
+                  AKHIR CATATAN RILIS v1.1
+================================================================================

@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.LinearGradient
 import android.graphics.Paint
+import android.graphics.Path
 import android.graphics.RectF
 import android.graphics.Shader
 import android.os.SystemClock
@@ -14,10 +15,12 @@ import com.altomedia.warkit.core.GameState
 import com.altomedia.warkit.data.ProductCatalog
 import com.altomedia.warkit.model.Customer
 import com.altomedia.warkit.model.Satisfaction
+import kotlin.math.abs
+import kotlin.math.sin
 
 /**
- * View Canvas 2D yang menggambar scene warung + pelanggan + HUD.
- * Game loop berjalan via invalidasi berulang (onDraw -> invalidate).
+ * View Canvas 2D yang menggambar scene warung portrait + pelanggan animasi
+ * + HUD modern. Game loop berjalan via invalidasi berulang (onDraw -> invalidate).
  */
 class GameView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
@@ -28,11 +31,14 @@ class GameView @JvmOverloads constructor(
 
     private var lastTime = 0L
     private val frameMs = 1000L / 60
+    private var animTick = 0L
 
     // Paints (dibuat sekali, di-reuse)
-    private val bgPaint = Paint()
-    private val floorPaint = Paint()
-    private val wallPaint = Paint()
+    private val skyPaint = Paint()
+    private var skyShader: Shader? = null
+    private val wallPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val floorPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private var floorShader: Shader? = null
     private val textPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val textSmall = Paint(Paint.ANTI_ALIAS_FLAG)
     private val textBold = Paint(Paint.ANTI_ALIAS_FLAG)
@@ -43,12 +49,13 @@ class GameView @JvmOverloads constructor(
     private val custPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val patiencePaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val doorPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-    private var hudBg: Shader? = null
+    private val accentPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val cardPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val shadowPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private var hudShader: Shader? = null
 
     init {
-        bgPaint.color = Color.parseColor("#BBDEFB")
-        floorPaint.color = Color.parseColor("#8D6E63")
-        wallPaint.color = Color.parseColor("#FFF8E1")
+        wallPaint.color = Color.parseColor("#FFF3E0")
         textPaint.color = Color.parseColor("#3E2C1C")
         textPaint.textSize = 28f
         textSmall.color = Color.parseColor("#5D4037")
@@ -56,21 +63,33 @@ class GameView @JvmOverloads constructor(
         textBold.color = Color.WHITE
         textBold.textSize = 26f
         textBold.isFakeBoldText = true
-        panelPaint.color = Color.parseColor("#FFF3E0")
-        panelPaint.alpha = 220
+        panelPaint.color = Color.parseColor("#FFF8E7")
+        panelPaint.alpha = 235
         shelfWood.color = Color.parseColor("#A1887F")
         shelfMetal.color = Color.parseColor("#90A4AE")
         shelfPaint.color = Color.parseColor("#6D4C41")
         custPaint.color = Color.parseColor("#42A5F5")
         patiencePaint.color = Color.parseColor("#66BB6A")
         doorPaint.color = Color.parseColor("#5D4037")
+        accentPaint.color = Color.parseColor("#E76F51")
+        cardPaint.color = Color.parseColor("#FFFFFF")
+        shadowPaint.color = Color.parseColor("#22000000")
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         engine?.configure(w.toFloat(), h.toFloat())
-        hudBg = LinearGradient(0f, 0f, 0f, 90f, intArrayOf(
-            Color.parseColor("#CC3E2C1C"), Color.parseColor("#003E2C1C")),
+        // Langit gradien hangat (modern)
+        skyShader = LinearGradient(0f, 0f, 0f, h * 0.45f,
+            intArrayOf(Color.parseColor("#FFE0B2"), Color.parseColor("#FFCCBC"), Color.parseColor("#FDF6E3")),
+            null, Shader.TileMode.CLAMP)
+        // Lantai gradien kayu
+        floorShader = LinearGradient(0f, h * 0.62f, 0f, h.toFloat(),
+            intArrayOf(Color.parseColor("#BCAAA4"), Color.parseColor("#8D6E63")),
+            null, Shader.TileMode.CLAMP)
+        // HUD gradien atas (modern gelap-transparan)
+        hudShader = LinearGradient(0f, 0f, 0f, 100f,
+            intArrayOf(Color.parseColor("#D03E2C1C"), Color.parseColor("#003E2C1C")),
             null, Shader.TileMode.CLAMP)
     }
 
@@ -79,11 +98,13 @@ class GameView @JvmOverloads constructor(
         val now = SystemClock.elapsedRealtime()
         val dt = if (lastTime == 0L) 0.016f else (now - lastTime) / 1000f
         lastTime = now
+        animTick = now
 
         engine?.update(dt.coerceAtMost(0.1f))
 
         val s = state ?: return
         drawScene(canvas, s)
+        drawShelves(canvas, s)
         drawCustomers(canvas, s)
         drawHUD(canvas, s)
 
@@ -93,61 +114,101 @@ class GameView @JvmOverloads constructor(
 
     private fun drawScene(canvas: Canvas, s: GameState) {
         val w = width.toFloat(); val h = height.toFloat()
-        // Langit
-        canvas.drawRect(0f, 0f, w, h * 0.5f, bgPaint)
-        // Dinding warung
-        canvas.drawRect(0f, h * 0.25f, w, h * 0.7f, wallPaint)
-        // Lantai
-        canvas.drawRect(0f, h * 0.7f, w, h, floorPaint)
-        // Garis lantai
+        // Langit gradien
+        skyPaint.shader = skyShader
+        canvas.drawRect(0f, 0f, w, h * 0.62f, skyPaint)
+        // Awan sederhana (modern flat)
+        val cloudP = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#33FFFFFF") }
+        drawCloud(canvas, w * 0.18f, h * 0.10f, 46f, cloudP)
+        drawCloud(canvas, w * 0.78f, h * 0.16f, 38f, cloudP)
+        // Dinding warung (atas)
+        wallPaint.color = Color.parseColor("#FFF3E0")
+        canvas.drawRect(0f, h * 0.30f, w, h * 0.62f, wallPaint)
+        // Garis dinding aksen modern (strip horizontal)
+        val stripP = Paint().apply { color = Color.parseColor("#FFE0B2"); strokeWidth = 4f }
+        canvas.drawLine(0f, h * 0.46f, w, h * 0.46f, stripP)
+
+        // Lantai gradien
+        floorPaint.shader = floorShader
+        canvas.drawRect(0f, h * 0.62f, w, h, floorPaint)
+        // Garis lantai aksen
         val lineP = Paint().apply { color = Color.parseColor("#6D4C41"); strokeWidth = 3f }
-        canvas.drawLine(0f, h * 0.7f, w, h * 0.7f, lineP)
-
-        // Rolling door (kanan belakang sebagai pintu masuk kiri? di kiri)
-        val doorW = w * 0.12f
-        canvas.drawRect(20f, h * 0.35f, 20f + doorW, h * 0.7f, doorPaint)
-        // Label pintu
-        textSmall.color = Color.WHITE
-        textSmall.textSize = 16f
-        if (s.shopOpen) {
-            canvas.drawText("🟢 BUKA", 26f, h * 0.35f - 6f, textSmall)
-        } else {
-            canvas.drawText("🔴 TUTUP", 26f, h * 0.35f - 6f, textSmall)
+        canvas.drawLine(0f, h * 0.62f, w, h * 0.62f, lineP)
+        // Ubin lantai (garis vertikal halus)
+        val tileP = Paint().apply { color = Color.parseColor("#33FFFFFF"); strokeWidth = 2f }
+        for (i in 1 until 6) {
+            val x = w * i / 6f
+            canvas.drawLine(x, h * 0.62f, x - w * 0.05f, h, tileP)
         }
-        textSmall.color = Color.parseColor("#5D4037")
 
-        // Kasir (kanan)
-        val cashierX = w * 0.72f
-        val cashierY = h * 0.62f
-        val cashierP = Paint().apply { color = Color.parseColor("#8D6E63") }
-        canvas.drawRect(cashierX, cashierY, cashierX + 160f, cashierY + 70f, cashierP)
-        // Meja kasir
-        val deskP = Paint().apply { color = Color.parseColor("#A1887F") }
-        canvas.drawRect(cashierX - 20f, cashierY + 40f, cashierX + 200f, cashierY + 60f, deskP)
-        textSmall.color = Color.WHITE; textSmall.textSize = 16f
-        canvas.drawText("💳 KASIR", cashierX + 20f, cashierY + 30f, textSmall)
+        // Pintu masuk (tengah-bawah) — modern glass door
+        val doorW = w * 0.18f
+        val doorX = w * 0.50f - doorW / 2f
+        val doorY = h * 0.62f
+        doorPaint.color = Color.parseColor("#5D4037")
+        canvas.drawRect(doorX, doorY, doorX + doorW, h * 0.86f, doorPaint)
+        // Kaca pintu
+        val glassP = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#B3E1FF") }
+        canvas.drawRect(doorX + 6f, doorY + 6f, doorX + doorW - 6f, h * 0.86f - 6f, glassP)
+        textSmall.color = Color.WHITE; textSmall.textSize = 14f
+        if (s.shopOpen) {
+            canvas.drawText("🟢 BUKA", doorX + 8f, doorY - 8f, textSmall)
+        } else {
+            canvas.drawText("🔴 TUTUP", doorX + 8f, doorY - 8f, textSmall)
+        }
         textSmall.color = Color.parseColor("#5D4037"); textSmall.textSize = 18f
 
-        // Rak (kiri-atas sampai tengah)
-        drawShelves(canvas, s, w, h)
+        // Kasir (kiri-tengah) — meja kasir modern
+        val cashierX = w * 0.18f
+        val cashierY = h * 0.60f
+        // Bayangan
+        canvas.drawRect(cashierX - 8f, cashierY + 70f, cashierX + 150f + 8f, cashierY + 82f, shadowPaint)
+        // Meja
+        val deskP = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#8D6E63") }
+        canvas.drawRect(cashierX, cashierY, cashierX + 150f, cashierY + 70f, deskP)
+        // Etalase kaca di atas meja
+        val caseP = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#A5D6A7") }
+        canvas.drawRect(cashierX + 10f, cashierY - 30f, cashierX + 140f, cashierY, caseP)
+        // Mesin kasir
+        val regP = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#37474F") }
+        canvas.drawRect(cashierX + 100f, cashierY - 24f, cashierX + 134f, cashierY - 2f, regP)
+        textSmall.color = Color.WHITE; textSmall.textSize = 14f
+        canvas.drawText("💳 KASIR", cashierX + 12f, cashierY + 42f, textSmall)
+        textSmall.color = Color.parseColor("#5D4037"); textSmall.textSize = 18f
     }
 
-    private fun drawShelves(canvas: Canvas, s: GameState, w: Float, h: Float) {
+    private fun drawCloud(canvas: Canvas, cx: Float, cy: Float, r: Float, p: Paint) {
+        canvas.drawCircle(cx, cy, r, p)
+        canvas.drawCircle(cx + r * 0.8f, cy + r * 0.2f, r * 0.8f, p)
+        canvas.drawCircle(cx - r * 0.8f, cy + r * 0.2f, r * 0.7f, p)
+        canvas.drawCircle(cx + r * 0.3f, cy - r * 0.5f, r * 0.7f, p)
+    }
+
+    private fun drawShelves(canvas: Canvas, s: GameState, ) {
+        val w = width.toFloat(); val h = height.toFloat()
         val isMetal = s.shelfLevel >= 2
         val rackPaint = if (isMetal) shelfMetal else shelfWood
-        val shelfTopY = h * 0.30f
-        val rackW = w * 0.45f
-        var rackX = w * 0.15f
+        // Rak diletakkan horizontal di bagian atas dinding (portrait)
+        val rackTopY = h * 0.34f
+        val rackW = w * 0.92f
+        var rackX = w * 0.04f
+        val rackGap = 8f
+        val rackH = 56f
 
         s.shelves.forEachIndexed { shelfIdx, shelf ->
-            // Bingkai rak
-            canvas.drawRect(rackX, shelfTopY, rackX + rackW, shelfTopY + 70f, rackPaint)
-            // Garis rak
-            canvas.drawRect(rackX, shelfTopY + 34f, rackX + rackW, shelfTopY + 38f, shelfPaint)
+            if (shelfIdx != 0) return@forEachIndexed  // hanya gambar rak pertama sebagai baris utama
+            // Bingkai rak dengan sudut membulat (modern)
+            val rect = RectF(rackX, rackTopY, rackX + rackW, rackTopY + rackH)
+            canvas.drawRoundRect(rect, 10f, 10f, rackPaint)
+            // Garis rak tengah
+            canvas.drawRect(rackX + 4f, rackTopY + rackH / 2f - 2f, rackX + rackW - 4f,
+                rackTopY + rackH / 2f + 2f, shelfPaint)
 
-            // Label rak
-            textSmall.color = Color.WHITE; textSmall.textSize = 14f
-            canvas.drawText("Rak ${shelfIdx + 1} (Lv.${s.shelfLevel})", rackX + 6f, shelfTopY - 4f, textSmall)
+            // Label rak (di ujung kiri, latar kecil)
+            val lblBg = Paint().apply { color = Color.parseColor("#CC3E2C1C") }
+            canvas.drawRoundRect(RectF(rackX + 4f, rackTopY - 22f, rackX + 96f, rackTopY - 2f), 6f, 6f, lblBg)
+            textSmall.color = Color.WHITE; textSmall.textSize = 11f
+            canvas.drawText("Rak ${shelfIdx + 1} • Lv.${s.shelfLevel}", rackX + 8f, rackTopY - 8f, textSmall)
             textSmall.color = Color.parseColor("#5D4037"); textSmall.textSize = 18f
 
             // Slot produk di rak
@@ -164,42 +225,96 @@ class GameView @JvmOverloads constructor(
                         else -> Color.parseColor("#EF5350")
                     }
                 }
-                canvas.drawRect(sx + 4f, shelfTopY + 40f, sx + slotW - 4f, shelfTopY + 66f, shelfPaint)
-                canvas.drawRect(sx + 6f, shelfTopY + 42f, sx + (slotW - 6f) * fillFrac.coerceAtMost(1f), shelfTopY + 64f, barPaint)
+                canvas.drawRect(sx + 4f, rackTopY + rackH - 16f, sx + slotW - 4f, rackTopY + rackH - 4f, shelfPaint)
+                canvas.drawRect(sx + 6f, rackTopY + rackH - 14f,
+                    sx + 6f + (slotW - 12f) * fillFrac.coerceIn(0f, 1f),
+                    rackTopY + rackH - 6f, barPaint)
 
                 // Emoji produk
-                textPaint.textSize = 22f
-                canvas.drawText(product.emoji, sx + 8f, shelfTopY + 30f, textPaint)
+                textPaint.textSize = 24f
+                canvas.drawText(product.emoji, sx + 10f, rackTopY + rackH / 2f + 4f, textPaint)
                 // Stok angka
-                textSmall.textSize = 12f; textSmall.color = Color.WHITE
-                canvas.drawText("${item.stock}/${item.capacity}", sx + 6f, shelfTopY + 56f, textSmall)
+                textSmall.textSize = 11f; textSmall.color = Color.WHITE
+                canvas.drawText("${item.stock}/${item.capacity}", sx + 6f, rackTopY + rackH - 18f, textSmall)
                 textSmall.color = Color.parseColor("#5D4037"); textSmall.textSize = 18f
             }
-            rackX += rackW + 20f
+        }
+
+        // Rak tambahan (sederhana) di bawah jika lebih dari 1 shelf
+        if (s.shelves.size > 1) {
+            val r2Y = h * 0.50f
+            canvas.drawRoundRect(RectF(rackX, r2Y, rackX + rackW, r2Y + rackH), 10f, 10f, rackPaint)
+            canvas.drawRect(rackX + 4f, r2Y + rackH / 2f - 2f, rackX + rackW - 4f,
+                r2Y + rackH / 2f + 2f, shelfPaint)
+            textSmall.color = Color.WHITE; textSmall.textSize = 11f
+            val lblBg = Paint().apply { color = Color.parseColor("#CC3E2C1C") }
+            canvas.drawRoundRect(RectF(rackX + 4f, r2Y - 22f, rackX + 110f, r2Y - 2f), 6f, 6f, lblBg)
+            canvas.drawText("Rak 2 • Lv.${s.shelfLevel}", rackX + 8f, r2Y - 8f, textSmall)
+            textSmall.color = Color.parseColor("#5D4037"); textSmall.textSize = 18f
+            // slot produk rak 2
+            val sh2 = s.shelves.getOrNull(1) ?: return
+            val slotW = rackW / 3f
+            sh2.forEachIndexed { slotIdx, item ->
+                val product = ProductCatalog.byId(item.productId)
+                val sx = rackX + slotIdx * slotW
+                val fillFrac = item.stock.toFloat() / item.capacity
+                val barPaint = Paint().apply {
+                    color = when {
+                        fillFrac > 0.5f -> Color.parseColor("#66BB6A")
+                        fillFrac > 0.2f -> Color.parseColor("#FFB300")
+                        else -> Color.parseColor("#EF5350")
+                    }
+                }
+                canvas.drawRect(sx + 4f, r2Y + rackH - 16f, sx + slotW - 4f, r2Y + rackH - 4f, shelfPaint)
+                canvas.drawRect(sx + 6f, r2Y + rackH - 14f,
+                    sx + 6f + (slotW - 12f) * fillFrac.coerceIn(0f, 1f), r2Y + rackH - 6f, barPaint)
+                textPaint.textSize = 24f
+                canvas.drawText(product.emoji, sx + 10f, r2Y + rackH / 2f + 4f, textPaint)
+                textSmall.textSize = 11f; textSmall.color = Color.WHITE
+                canvas.drawText("${item.stock}/${item.capacity}", sx + 6f, r2Y + rackH - 18f, textSmall)
+                textSmall.color = Color.parseColor("#5D4037"); textSmall.textSize = 18f
+            }
         }
     }
 
     private fun drawCustomers(canvas: Canvas, s: GameState) {
+        val bob = (sin(animTick / 150.0) * 3f).toFloat()
         for (c in s.customers) {
-            // Badan (lingkaran)
+            val bobY = if (c.phase == Customer.Phase.ENTERING || c.phase == Customer.Phase.QUEUING ||
+                c.phase == Customer.Phase.LEAVING) bob else 0f
+            // Bayangan
+            shadowPaint.color = Color.parseColor("#22000000")
+            canvas.drawOval(c.x - 18f, c.y + 28f, c.x + 18f, c.y + 38f, shadowPaint)
+            // Badan (rounded rect modern)
             custPaint.color = when (c.type) {
                 com.altomedia.warkit.model.CustomerType.IBU_RUMAH_TANGGA -> Color.parseColor("#EC407A")
                 com.altomedia.warkit.model.CustomerType.ANAK_SEKOLAH -> Color.parseColor("#7E57C2")
                 com.altomedia.warkit.model.CustomerType.OJOL -> Color.parseColor("#26A69A")
-                com.altomedia.warkit.model.CustomerType.PETANI -> Color.parseColor("#8D6E63")
+                com.altomedia.warkit.model.CustomerType.PETANI -> Color.parseColor("#66BB6A")
                 com.altomedia.warkit.model.CustomerType.KARYAWAN -> Color.parseColor("#5C6BC0")
             }
-            // BAB 16: VIP lebih besar + badge bintang
-            val radius = if (c.isVip) 28f else 22f
-            canvas.drawCircle(c.x, c.y, radius, custPaint)
-            // Emoji kepala
-            textPaint.textSize = if (c.isVip) 30f else 26f
-            canvas.drawText(c.type.emoji, c.x - 13f, c.y - 18f, textPaint)
-            // Badge VIP
-            if (c.isVip) {
-                textPaint.textSize = 18f
-                canvas.drawText("⭐", c.x + 14f, c.y - 18f, textPaint)
+            if (c.isVip) custPaint.color = Color.parseColor("#FFD54F")
+            // Kepala
+            val headP = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#FFE0B2") }
+            canvas.drawCircle(c.x, c.y - 26f + bobY, 12f, headP)
+            // Rambut/tutup kepala
+            val hairP = Paint(Paint.ANTI_ALIAS_FLAG)
+            hairP.color = when (c.type) {
+                com.altomedia.warkit.model.CustomerType.IBU_RUMAH_TANGGA -> Color.parseColor("#6D4C41")
+                com.altomedia.warkit.model.CustomerType.OJOL -> Color.parseColor("#37474F")
+                else -> Color.parseColor("#3E2723")
             }
+            canvas.drawArc(c.x - 12f, c.y - 38f + bobY, c.x + 12f, c.y - 14f + bobY, 0f, 180f, true, hairP)
+            // Badan (rounded rect)
+            canvas.drawRoundRect(RectF(c.x - 14f, c.y - 14f + bobY, c.x + 14f, c.y + 26f + bobY), 8f, 8f, custPaint)
+            // Tangan (lingkaran kecil) saat PICKING
+            if (c.phase == Customer.Phase.PICKING) {
+                val armP = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#FFE0B2") }
+                canvas.drawCircle(c.x + 18f, c.y - 4f + bobY, 4f, armP)
+            }
+            // Emoji tipe di atas kepala
+            textPaint.textSize = 16f
+            canvas.drawText(c.type.emoji, c.x - 8f, c.y - 44f + bobY, textPaint)
 
             // Bar kesabaran
             val patienceFrac = (1f - (c.waited / c.patience)).coerceIn(0f, 1f)
@@ -210,18 +325,28 @@ class GameView @JvmOverloads constructor(
                 Satisfaction.KECEWA -> Color.parseColor("#FB8C00")
                 Satisfaction.MARAH -> Color.parseColor("#E53935")
             }
-            canvas.drawRect(c.x - 20f, c.y - 38f, c.x - 20f + 40f * patienceFrac, c.y - 32f, patiencePaint)
-            // Bingkai bar
-            canvas.drawRect(c.x - 20f, c.y - 38f, c.x + 20f, c.y - 32f, Paint().apply {
-                color = Color.TRANSPARENT; style = Paint.Style.STROKE; strokeWidth = 1.5f
-            })
+            val barBg = Paint().apply { color = Color.parseColor("#443E2C1C") }
+            canvas.drawRoundRect(RectF(c.x - 22f, c.y - 54f + bobY, c.x + 22f, c.y - 48f + bobY), 3f, 3f, barBg)
+            canvas.drawRoundRect(RectF(c.x - 22f, c.y - 54f + bobY,
+                c.x - 22f + 44f * patienceFrac, c.y - 48f + bobY), 3f, 3f, patiencePaint)
 
             // Daftar belanja (kecil di atas kepala saat PICKING)
             if (c.phase == Customer.Phase.PICKING) {
-                textSmall.textSize = 14f; textSmall.color = Color.parseColor("#3E2C1C")
+                textSmall.textSize = 13f; textSmall.color = Color.parseColor("#3E2C1C")
                 val items = c.shoppingList.joinToString("") { ProductCatalog.byId(it).emoji }
-                canvas.drawText(items, c.x - items.length * 5f, c.y - 44f, textSmall)
+                val lblBg = Paint().apply { color = Color.parseColor("#CCFFFFFF") }
+                canvas.drawRoundRect(RectF(c.x - items.length * 5f - 4f, c.y - 72f + bobY,
+                    c.x + items.length * 5f + 4f, c.y - 58f + bobY), 5f, 5f, lblBg)
+                canvas.drawText(items, c.x - items.length * 5f, c.y - 60f + bobY, textSmall)
                 textSmall.textSize = 18f
+            }
+            // Badge VIP
+            if (c.isVip) {
+                val vipP = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#FFD54F") }
+                canvas.drawCircle(c.x + 14f, c.y - 36f + bobY, 5f, vipP)
+                textSmall.textSize = 9f; textSmall.color = Color.parseColor("#5D4037")
+                canvas.drawText("★", c.x + 12f, c.y - 33f + bobY, textSmall)
+                textSmall.textSize = 18f; textSmall.color = Color.parseColor("#5D4037")
             }
         }
     }
@@ -229,110 +354,134 @@ class GameView @JvmOverloads constructor(
     private fun drawHUD(canvas: Canvas, s: GameState) {
         val w = width.toFloat()
         val h = height.toFloat()
-        // Background HUD atas
-        val hudPaint = Paint().apply { shader = hudBg }
-        canvas.drawRect(0f, 0f, w, 90f, hudPaint)
+        // Background HUD atas (modern gradient)
+        val hudPaint = Paint().apply { shader = hudShader }
+        canvas.drawRect(0f, 0f, w, 100f, hudPaint)
+        // Kartu HUD (modern card style)
+        val cardPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#CCFFFFFF") }
+        // Kartu uang
+        canvas.drawRoundRect(RectF(12f, 12f, 200f, 56f), 12f, 12f, cardPaint)
+        textBold.textSize = 20f; textBold.color = Color.parseColor("#3E2C1C")
+        canvas.drawText("Rp${formatMoney(s.money)}", 24f, 38f, textBold)
+        textSmall.color = Color.parseColor("#FFB300"); textSmall.textSize = 12f
+        canvas.drawText("💎 ${s.diamond}", 24f, 52f, textSmall)
+        textSmall.color = Color.parseColor("#5D4037"); textSmall.textSize = 18f
 
-        textBold.textSize = 22f; textBold.color = Color.WHITE
-        // Uang
-        canvas.drawText("💵 Rp${formatMoney(s.money)}", 16f, 36f, textBold)
-        // Diamond
-        canvas.drawText("💎 ${s.diamond}", 16f, 64f, textBold)
-        // Level + EXP bar
-        val lvX = 240f
-        canvas.drawText("Lv.${s.level}", lvX, 36f, textBold)
+        // Kartu level + EXP
+        val lvX = 212f
+        canvas.drawRoundRect(RectF(lvX, 12f, lvX + 150f, 56f), 12f, 12f, cardPaint)
+        textBold.color = Color.parseColor("#3E2C1C"); textBold.textSize = 18f
+        canvas.drawText("Lv.${s.level}", lvX + 10f, 36f, textBold)
         val expFrac = s.exp.toFloat() / s.expToNext().coerceAtLeast(1)
-        val expPaint = Paint().apply { color = Color.parseColor("#37474F") }
+        val expPaint = Paint().apply { color = Color.parseColor("#CFD8DC") }
         val expFill = Paint().apply { color = Color.parseColor("#FFD54F") }
-        canvas.drawRect(lvX, 44f, lvX + 120f, 58f, expPaint)
-        canvas.drawRect(lvX, 44f, lvX + 120f * expFrac.coerceIn(0f,1f), 58f, expFill)
-        textSmall.color = Color.WHITE; textSmall.textSize = 12f
-        canvas.drawText("EXP ${s.exp}/${s.expToNext()}", lvX + 4f, 54f, textSmall)
-        textSmall.textSize = 18f; textSmall.color = Color.parseColor("#5D4037")
+        canvas.drawRoundRect(RectF(lvX + 56f, 30f, lvX + 142f, 42f), 5f, 5f, expPaint)
+        canvas.drawRoundRect(RectF(lvX + 56f, 30f, lvX + 56f + 86f * expFrac.coerceIn(0f, 1f), 42f), 5f, 5f, expFill)
+        textSmall.color = Color.parseColor("#5D4037"); textSmall.textSize = 10f
+        canvas.drawText("EXP ${s.exp}/${s.expToNext()}", lvX + 60f, 52f, textSmall)
+        textSmall.textSize = 18f
 
-        // Reputasi + tier (BAB 17)
+        // Kartu reputasi
+        val repX = w - 158f
+        canvas.drawRoundRect(RectF(repX, 12f, repX + 146f, 56f), 12f, 12f, cardPaint)
         val tier = s.reputationTier()
-        canvas.drawText("⭐ ${s.reputation + s.decorationReputation()}", lvX + 140f, 36f, textBold)
-        textSmall.color = Color.parseColor("#FFD54F"); textSmall.textSize = 12f
-        canvas.drawText("${tier.emoji} ${tier.displayName}", lvX + 140f, 52f, textSmall)
+        textBold.textSize = 18f; textBold.color = Color.parseColor("#3E2C1C")
+        canvas.drawText("⭐ ${s.reputation + s.decorationReputation()}", repX + 10f, 34f, textBold)
+        textSmall.color = Color.parseColor("#FFB300"); textSmall.textSize = 11f
+        canvas.drawText("${tier.emoji} ${tier.displayName}", repX + 10f, 50f, textSmall)
         textSmall.color = Color.parseColor("#5D4037"); textSmall.textSize = 18f
-        // Hari
-        canvas.drawText("📅 Hari ${s.day}", lvX + 280f, 36f, textBold)
-        // Waktu & cuaca (BAB 18 & 19)
-        textSmall.color = Color.WHITE; textSmall.textSize = 12f
-        canvas.drawText("${s.timeOfDay.emoji} ${s.timeOfDay.displayName}", lvX + 280f, 52f, textSmall)
-        canvas.drawText("${s.weather.emoji} ${s.weather.displayName}", lvX + 280f, 66f, textSmall)
+
+        // Kartu hari/waktu/cuaca
+        val dayX = w - 158f
+        canvas.drawRoundRect(RectF(dayX, 62f, dayX + 146f, 96f), 10f, 10f, cardPaint)
+        textSmall.color = Color.parseColor("#3E2C1C"); textSmall.textSize = 13f
+        canvas.drawText("📅 Hari ${s.day}  ${s.timeOfDay.emoji}${s.weather.emoji}", dayX + 8f, 84f, textSmall)
         textSmall.color = Color.parseColor("#5D4037"); textSmall.textSize = 18f
-        // Pendapatan sesi
-        canvas.drawText("📈 Rp${formatMoney(s.sessionIncome)}", w - 260f, 36f, textBold)
-        // Pelanggan dilayani + pegawai
-        canvas.drawText("👥 ${s.totalCustomersServed} | 🧑‍💼 ${s.employees.size}", w - 260f, 64f, textBold)
-        // Event & promosi aktif (BAB 26, 29, 30)
-        if (s.seasonalEvent != com.altomedia.warkit.model.SeasonalEvent.NONE) {
-            textSmall.color = Color.parseColor("#E53935"); textSmall.textSize = 12f
-            canvas.drawText("${s.seasonalEvent.emoji} ${s.seasonalEvent.displayName} (${s.eventDaysLeft}h)",
-                w - 260f, 80f, textSmall)
-            textSmall.color = Color.parseColor("#5D4037"); textSmall.textSize = 18f
+
+        // Pendapatan sesi & pelanggan (kartu kiri-bawah HUD)
+        val stX = 212f
+        canvas.drawRoundRect(RectF(stX, 62f, stX + 150f, 96f), 10f, 10f, cardPaint)
+        textSmall.color = Color.parseColor("#1565C0"); textSmall.textSize = 13f
+        canvas.drawText("📈 Rp${formatMoney(s.sessionIncome)}", stX + 8f, 80f, textSmall)
+        textSmall.color = Color.parseColor("#5D4037"); textSmall.textSize = 11f
+        canvas.drawText("👥 ${s.totalCustomersServed} | 🧑‍💼 ${s.employees.size}", stX + 8f, 92f, textSmall)
+        textSmall.textSize = 18f
+
+        // Status warung (kanan atas-tengah)
+        val status = if (s.shopOpen) "BUKA" else "TUTUP"
+        val stP = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = if (s.shopOpen) Color.parseColor("#A5D6A7") else Color.parseColor("#EF9A9A")
         }
-        if (s.promotion != com.altomedia.warkit.model.Promotion.TIDAK_ADA) {
-            textSmall.color = Color.parseColor("#1565C0"); textSmall.textSize = 12f
-            canvas.drawText("${s.promotion.emoji} ${s.promotion.displayName} (${s.promotionDaysLeft}h)",
-                w - 260f, if (s.seasonalEvent != com.altomedia.warkit.model.SeasonalEvent.NONE) 94f else 80f, textSmall)
-            textSmall.color = Color.parseColor("#5D4037"); textSmall.textSize = 18f
-        }
-        // Status warung
-        val status = if (s.shopOpen) "WARUNG BUKA" else "WARUNG TUTUP"
-        textBold.color = if (s.shopOpen) Color.parseColor("#A5D6A7") else Color.parseColor("#EF9A9A")
-        canvas.drawText(status, w - 120f, 50f, textBold)
-        // BAB 39: level bangunan
-        textSmall.color = Color.parseColor("#6D4C41"); textSmall.textSize = 12f
-        canvas.drawText("${s.building().emoji} ${s.building().displayName}", 12f, h - 100f, textSmall)
-        // BAB 31: status investor
+        canvas.drawRoundRect(RectF(w - 60f, 62f, w - 12f, 96f), 10f, 10f, stP)
+        textBold.color = Color.parseColor("#1B5E20"); textBold.textSize = 14f
+        if (!s.shopOpen) textBold.color = Color.parseColor("#B71C1C")
+        canvas.drawText(status, w - 50f, 84f, textBold)
+        textBold.color = Color.WHITE
+
+        // Panel info kiri-bawah (bangunan, investor, grosir, provinsi, raja warung)
+        val infoX = 12f
+        var infoY = h - 220f
+        val infoP = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#CCFFFFFF") }
+        canvas.drawRoundRect(RectF(infoX, infoY, infoX + 230f, h - 20f), 10f, 10f, infoP)
+        textSmall.textSize = 12f; textSmall.color = Color.parseColor("#6D4C41")
+        canvas.drawText("${s.building().emoji} ${s.building().displayName}", infoX + 10f, infoY + 20f, textSmall)
+        infoY += 20f
         if (s.investorActive) {
             textSmall.color = Color.parseColor("#F9A825")
-            canvas.drawText("🤝 Investor: hari ${s.investorDaysElapsed}/30 (${s.investorDaysMet}✓)",
-                12f, h - 80f, textSmall)
+            canvas.drawText("🤝 Investor: ${s.investorDaysElapsed}/30 (${s.investorDaysMet}✓)", infoX + 10f, infoY + 16f, textSmall)
+            infoY += 16f
         } else if (s.investorDealAccepted) {
             textSmall.color = Color.parseColor("#43A047")
-            canvas.drawText("🤝 Investor: deal aktif (x${s.investorIncomeMult})",
-                12f, h - 80f, textSmall)
+            canvas.drawText("🤝 Deal aktif x${s.investorIncomeMult}", infoX + 10f, infoY + 16f, textSmall)
+            infoY += 16f
         }
-        // BAB 32: status grosir
         if (s.grosirUnlocked) {
             textSmall.color = Color.parseColor("#1565C0")
-            canvas.drawText("📦 Grosir: +Rp${s.grosirDailyIncome()}/hari",
-                12f, h - 60f, textSmall)
+            canvas.drawText("📦 Grosir +Rp${s.grosirDailyIncome()}/hari", infoX + 10f, infoY + 16f, textSmall)
+            infoY += 16f
         }
-        // BAB 41: provinsi
         if (s.provinces.isNotEmpty()) {
-            textSmall.color = Color.parseColor("#00838F"); textSmall.textSize = 12f
-            canvas.drawText("🇮🇩 ${s.provinces.size} provinsi • pelanggan x${s.provinceCustomerMult()}",
-                12f, h - 40f, textSmall)
+            textSmall.color = Color.parseColor("#00838F")
+            canvas.drawText("🇮🇩 ${s.provinces.size} prov • x${s.provinceCustomerMult()}", infoX + 10f, infoY + 16f, textSmall)
+            infoY += 16f
         }
-        // BAB 43/44: member & pembayaran
-        if (s.membershipTier != com.altomedia.warkit.model.MembershipTier.NONE ||
-            s.paymentLevel > 0) {
+        if (s.membershipTier != com.altomedia.warkit.model.MembershipTier.NONE || s.paymentLevel > 0) {
             textSmall.color = Color.parseColor("#7B1FA2")
-            canvas.drawText("${s.membershipTier.emoji} ${s.paymentMethod().emoji}",
-                w - 260f, if (s.seasonalEvent != com.altomedia.warkit.model.SeasonalEvent.NONE &&
-                    s.promotion != com.altomedia.warkit.model.Promotion.TIDAK_ADA) 108f
-                    else if (s.seasonalEvent != com.altomedia.warkit.model.SeasonalEvent.NONE ||
-                        s.promotion != com.altomedia.warkit.model.Promotion.TIDAK_ADA) 94f else 80f,
-                textSmall)
+            canvas.drawText("${s.membershipTier.emoji} ${s.paymentMethod().emoji}", infoX + 10f, infoY + 16f, textSmall)
+            infoY += 16f
         }
-        // BAB 46: krisis pasokan
-        if (s.supplyCrisis.active) {
-            textSmall.color = Color.parseColor("#C62828"); textSmall.textSize = 13f
-            canvas.drawText("⚠️ KRISIS PASOKAN (${s.supplyCrisis.daysLeft}h)",
-                w / 2 - 80f, 70f, textSmall)
-        }
-        // BAB 49: gelar Raja Warung
         if (s.rajaWarungTitle) {
-            textSmall.color = Color.parseColor("#FFD54F"); textSmall.textSize = 14f
-            canvas.drawText("👑 Raja Warung Indonesia", 12f, h - 20f, textSmall)
+            textSmall.color = Color.parseColor("#FFD54F"); textSmall.textSize = 13f
+            canvas.drawText("👑 Raja Warung Indonesia", infoX + 10f, infoY + 18f, textSmall)
+            textSmall.textSize = 12f
+            infoY += 18f
         }
         textSmall.color = Color.parseColor("#5D4037"); textSmall.textSize = 18f
-        textBold.color = Color.WHITE
+
+        // Event & promosi (kartu kanan-bawah)
+        if (s.seasonalEvent != com.altomedia.warkit.model.SeasonalEvent.NONE ||
+            s.promotion != com.altomedia.warkit.model.Promotion.TIDAK_ADA) {
+            var ey = h - 90f
+            canvas.drawRoundRect(RectF(w - 232f, ey, w - 12f, ey + 70f), 10f, 10f, infoP)
+            if (s.seasonalEvent != com.altomedia.warkit.model.SeasonalEvent.NONE) {
+                textSmall.color = Color.parseColor("#E53935"); textSmall.textSize = 12f
+                canvas.drawText("${s.seasonalEvent.emoji} ${s.seasonalEvent.displayName} (${s.eventDaysLeft}h)", w - 224f, ey + 22f, textSmall)
+                ey += 20f
+            }
+            if (s.promotion != com.altomedia.warkit.model.Promotion.TIDAK_ADA) {
+                textSmall.color = Color.parseColor("#1565C0")
+                canvas.drawText("${s.promotion.emoji} ${s.promotion.displayName} (${s.promotionDaysLeft}h)", w - 224f, ey + 22f, textSmall)
+            }
+            textSmall.color = Color.parseColor("#5D4037"); textSmall.textSize = 18f
+        }
+        // BAB 46: krisis pasokan (banner tengah atas)
+        if (s.supplyCrisis.active) {
+            val crP = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#C62828") }
+            canvas.drawRoundRect(RectF(w / 2 - 110f, 6f, w / 2 + 110f, 30f), 6f, 6f, crP)
+            textSmall.color = Color.WHITE; textSmall.textSize = 13f
+            canvas.drawText("⚠️ KRISIS PASOKAN (${s.supplyCrisis.daysLeft}h)", w / 2 - 100f, 22f, textSmall)
+            textSmall.color = Color.parseColor("#5D4037"); textSmall.textSize = 18f
+        }
     }
 
     private fun formatMoney(v: Long): String {
