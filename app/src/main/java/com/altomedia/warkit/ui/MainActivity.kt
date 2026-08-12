@@ -99,6 +99,9 @@ class MainActivity : AppCompatActivity() {
         btnBar.addView(actionBtn("⚙️", "Operasional", 0xFF5C6BC0.toInt()) { openOperations() })
         btnBar.addView(actionBtn("💼", "Bisnis", 0xFF8D6E63.toInt()) { openBusiness() })
         btnBar.addView(actionBtn("📅", "Event", 0xFFE53935.toInt()) { openEvents() })
+        btnBar.addView(actionBtn("🇮🇩", "Provinsi", 0xFF00ACC1.toInt()) { openProvinces() })
+        btnBar.addView(actionBtn("💳", "Modern", 0xFFAB47BC.toInt()) { openModern() })
+        btnBar.addView(actionBtn("🏆", "Prestasi", 0xFFFFA000.toInt()) { openAchievements() })
         val btnLp = FrameLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             btnSize + 24
@@ -195,10 +198,21 @@ class MainActivity : AppCompatActivity() {
     private fun openBusiness() {
         BusinessDialog(this, state) { save.save(state) }.show()
     }
+    private fun openProvinces() {
+        ProvinceDialog(this, state) { save.save(state) }.show()
+    }
+    private fun openModern() {
+        ModernDialog(this, state) { save.save(state) }.show()
+    }
+    private fun openAchievements() {
+        AchievementDialog(this, state) { save.save(state) }.show()
+    }
 
     /** Trigger cutscene BAB 20 saat reputasi mencapai tier tertentu (sekali). */
     private var cutsceneShown = false
     private var nationalCutsceneShown = false
+    private var nationalAwardShown = false
+    private var rajaWarungShown = false
     private fun maybeShowCutscene() {
         if (!cutsceneShown && state.reputation >= 700) {  // Warung Terkenal
             cutsceneShown = true
@@ -213,7 +227,31 @@ class MainActivity : AppCompatActivity() {
                 save.save(state)
             }.show()
         }
+        // BAB 47: penghargaan nasional
+        if (!nationalAwardShown && state.checkNationalAward()) {
+            nationalAwardShown = true
+            AwardCutsceneDialog(this, state, isRajaWarung = false) {
+                save.save(state)
+            }.show()
+        }
+        // BAB 49: gelar Raja Warung
+        if (!rajaWarungShown && state.checkRajaWarung()) {
+            rajaWarungShown = true
+            AwardCutsceneDialog(this, state, isRajaWarung = true) {
+                save.save(state)
+            }.show()
+        }
+        // BAB 46: krisis pasokan — tampilkan dialog
+        if (state.supplyCrisis.active && !crisisDialogShown) {
+            crisisDialogShown = true
+            CrisisDialog(this, state) {
+                save.save(state); crisisDialogShown = state.supplyCrisis.active
+            }.show()
+        } else if (!state.supplyCrisis.active) {
+            crisisDialogShown = false
+        }
     }
+    private var crisisDialogShown = false
 
     override fun onPause() {
         super.onPause()

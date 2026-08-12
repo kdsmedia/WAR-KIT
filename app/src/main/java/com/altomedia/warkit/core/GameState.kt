@@ -333,6 +333,156 @@ class GameState {
         acc + com.altomedia.warkit.data.FacilityBank.byId(id).comfortBoost
     }
 
+    // === BAB 41: Provinsi ===
+    val provinces: MutableList<String> = mutableListOf()
+    fun openProvince(id: String): Boolean {
+        if (provinces.contains(id)) return false
+        val p = com.altomedia.warkit.data.ProvinceBank.byId(id)
+        if (level < p.unlockLevel || money < p.unlockCost) return false
+        money -= p.unlockCost
+        provinces.add(id)
+        return true
+    }
+    fun provinceCustomerMult(): Float {
+        if (provinces.isEmpty()) return 1f
+        return provinces.fold(1f) { acc, id ->
+            acc * com.altomedia.warkit.data.ProvinceBank.byId(id).customerMult
+        } / provinces.size.coerceAtLeast(1)
+    }
+    fun provinceOpCostMult(): Float {
+        if (provinces.isEmpty()) return 1f
+        return provinces.fold(0f) { acc, id ->
+            acc + com.altomedia.warkit.data.ProvinceBank.byId(id).opCostMult
+        } / provinces.size
+    }
+
+    // === BAB 43: Program member ===
+    var membershipTier: com.altomedia.warkit.model.MembershipTier =
+        com.altomedia.warkit.model.MembershipTier.NONE
+    fun launchMembership(t: com.altomedia.warkit.model.MembershipTier): Boolean {
+        if (money < t.cost || level < t.unlockLevel) return false
+        money -= t.cost
+        membershipTier = t
+        return true
+    }
+
+    // === BAB 44: Pembayaran digital ===
+    var paymentLevel: Int = 0
+    fun paymentMethod(): com.altomedia.warkit.model.PaymentMethod =
+        com.altomedia.warkit.model.PaymentMethod.at(paymentLevel)
+    fun upgradePayment(): Boolean {
+        val next = com.altomedia.warkit.model.PaymentMethod.entries.getOrNull(paymentLevel + 1) ?: return false
+        if (level < next.unlockLevel || money < next.upgradeCost) return false
+        money -= next.upgradeCost
+        paymentLevel++
+        return true
+    }
+
+    // === BAB 45: Pusat distribusi nasional ===
+    var nationalDist: com.altomedia.warkit.model.NationalDistribution =
+        com.altomedia.warkit.model.NationalDistribution()
+    fun activateNationalDist(): Boolean {
+        if (nationalDist.active) return false
+        val cost = 50_000_000L
+        if (money < cost || level < 23) return false
+        money -= cost
+        nationalDist.active = true
+        return true
+    }
+    fun upgradeNationalDist(): Boolean {
+        if (!nationalDist.active) return false
+        val cost = nationalDist.upgradeCost()
+        if (money < cost) return false
+        money -= cost
+        nationalDist.level++
+        return true
+    }
+
+    // === BAB 46: Krisis pasokan ===
+    var supplyCrisis: com.altomedia.warkit.model.SupplyCrisis =
+        com.altomedia.warkit.model.SupplyCrisis()
+    fun triggerCrisis() {
+        if (supplyCrisis.active) return
+        supplyCrisis.active = true
+        supplyCrisis.daysLeft = 3
+        supplyCrisis.severity = (0.3f + kotlin.random.Random.nextFloat() * 0.4f)
+    }
+    fun resolveCrisisAlternativeSupplier(): Boolean {
+        val cost = (2_000_000L * (1 + supplyCrisis.severity)).toLong()
+        if (money < cost) return false
+        money -= cost
+        supplyCrisis.resolve()
+        return true
+    }
+    fun resolveCrisisTransferStock(): Boolean {
+        // Transfer dari cabang lain — butuh >= 1 cabang
+        if (branches.isEmpty()) return false
+        supplyCrisis.resolve()
+        return true
+    }
+    fun resolveCrisisReducePromo() {
+        promotion = com.altomedia.warkit.model.Promotion.TIDAK_ADA
+        promotionDaysLeft = 0
+        supplyCrisis.resolve()
+    }
+
+    // === BAB 47: Penghargaan nasional ===
+    var nationalAwardReceived: Boolean = false
+    fun checkNationalAward(): Boolean {
+        if (nationalAwardReceived) return false
+        if (reputation >= 1500 && branches.size >= 10 && provinces.size >= 5) {
+            nationalAwardReceived = true
+            reputation += 100
+            return true
+        }
+        return false
+    }
+
+    // === BAB 48: Persaingan nasional ===
+    var nationalCompetitionActive: Boolean = false
+    fun nationalRetentionRate(): Float {
+        if (!nationalCompetitionActive) return 1f
+        val score = playerShopScore()
+        return (0.5f + score * 0.5f).coerceIn(0.3f, 1f)
+    }
+
+    // === BAB 49: Raja Warung ===
+    var rajaWarungTitle: Boolean = false
+    fun checkRajaWarung(): Boolean {
+        if (rajaWarungTitle) return false
+        if (branches.size >= 100 && totalCustomersServed >= 10000 && reputation >= 3000) {
+            rajaWarungTitle = true
+            return true
+        }
+        return false
+    }
+
+    // === BAB 50: Endless Empire ===
+    var endlessEmpireUnlocked: Boolean = false
+    val achievements: MutableList<com.altomedia.warkit.model.Achievement> =
+        com.altomedia.warkit.data.AchievementBank.all.map { it.copy() }.toMutableList()
+    var prestige: Int = 0
+    fun unlockEndlessEmpire() { endlessEmpireUnlocked = true }
+    fun updateAchievements() {
+        achievements.find { it.id == "first_customer" }?.let { it.progress = if (totalCustomersServed >= 1) 1 else 0 }
+        achievements.find { it.id == "serve_100" }?.let { it.progress = totalCustomersServed }
+        achievements.find { it.id == "serve_1000" }?.let { it.progress = totalCustomersServed }
+        achievements.find { it.id == "serve_10000" }?.let { it.progress = totalCustomersServed }
+        achievements.find { it.id == "income_1m" }?.let { it.progress = totalIncomeEarned.toInt() }
+        achievements.find { it.id == "income_100m" }?.let { it.progress = totalIncomeEarned.toInt() }
+        achievements.find { it.id == "income_1b" }?.let { it.progress = totalIncomeEarned.toInt() }
+        achievements.find { it.id == "vip_50" }?.let { it.progress = totalVipServed }
+        achievements.find { it.id == "branch_10" }?.let { it.progress = branches.size }
+        achievements.find { it.id == "branch_100" }?.let { it.progress = branches.size }
+        achievements.find { it.id == "province_all" }?.let { it.progress = provinces.size }
+        achievements.find { it.id == "employee_50" }?.let { it.progress = totalEmployeesHired }
+        achievements.find { it.id == "rep_legendary" }?.let {
+            it.progress = if (reputationTier() == com.altomedia.warkit.model.ReputationTier.WARUNG_LEGENDARIS) 1 else 0
+        }
+    }
+    var totalIncomeEarned: Long = 0
+    var totalEmployeesHired: Int = 0
+
     /** Tier reputasi saat ini (BAB 17). */
     fun reputationTier(): ReputationTier = ReputationTier.at(
         reputation + decorationReputation()
@@ -345,14 +495,15 @@ class GameState {
         return base + tier + decorationVipBoost() + seasonalEvent.vipChanceBonus
     }
 
-    /** Multiplier jumlah pelanggan: tier reputasi * cuaca * event * promosi * kompetisi (BAB 17,19,26,27,29,30). */
+    /** Multiplier jumlah pelanggan: tier * cuaca * event * promosi * kompetisi * provinsi (BAB 17,19,26,27,29,30,41,48). */
     fun customerSpawnMult(): Float {
         val tier = reputationTier().customerMult
         val weather = weather.customerMult()
         val event = seasonalEvent.customerMult
         val promo = promotion.customerMult
-        val competition = competition.retentionRate()
-        return tier * weather * event * promo * competition
+        val competition = competition.retentionRate() * nationalRetentionRate()
+        val province = provinceCustomerMult()
+        return tier * weather * event * promo * competition * province
     }
 
     /** Biaya operasional harian pegawai (dikurangi efisiensi). */
@@ -403,7 +554,9 @@ class GameState {
         // Efisiensi pegawai mengurangi biaya -> menambah margin (BAB 11)
         val effBonus = 1f + (employeeEfficiency() / 100f)
         // BAB 26: promosi menaikkan nilai belanja & mengurangi margin
-        val billMult = promotion.billMult * seasonalEvent.billMult * building().transactionMult
+        // BAB 43: member menaikkan nilai transaksi
+        val billMult = promotion.billMult * seasonalEvent.billMult * building().transactionMult *
+            membershipTier.billMult
         val profitPenalty = promotion.profitPenalty
         val totalBill = (c.bill * billMult).toInt()
         val baseProfit = (totalBill * profitMult * effBonus * (1f - profitPenalty) *
@@ -413,6 +566,7 @@ class GameState {
 
         money += earned
         sessionIncome += earned
+        totalIncomeEarned += earned
         lastIncome = earned
         val repGain = (s?.reputationBonus() ?: 1) + employeeFriendliness() +
             satisfactionBonus + promotion.reputationBoost
@@ -669,6 +823,27 @@ class GameState {
         // BAB 31: cek target investor harian
         tickInvestor(dailyIncome = (sessionIncome / day.coerceAtLeast(1)),
             dailyCustomers = customersServedToday)
+        // BAB 46: krisis pasokan acak (level 20+, ~5% chance/hari)
+        if (level >= 20 && !supplyCrisis.active && kotlin.random.Random.nextFloat() < 0.05f) {
+            triggerCrisis()
+        }
+        if (supplyCrisis.active) {
+            supplyCrisis.daysLeft--
+            if (supplyCrisis.daysLeft <= 0 && supplyCrisis.active) {
+                // krisis tidak ditangani: pendapatan turun
+                money -= (1_000_000L * (1 + supplyCrisis.severity).toInt())
+                supplyCrisis.resolve()
+            }
+        }
+        // BAB 47: cek penghargaan nasional
+        checkNationalAward()
+        // BAB 48: persaingan nasional aktif di level 25+
+        if (level >= 25) nationalCompetitionActive = true
+        // BAB 49: cek gelar Raja Warung
+        checkRajaWarung()
+        // BAB 50: update achievement & unlock endless empire
+        updateAchievements()
+        if (rajaWarungTitle) unlockEndlessEmpire()
         checkDailyReset()
     }
 

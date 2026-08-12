@@ -54,6 +54,16 @@ object ProductCatalog {
         Product("kurma",      "Kurma",       "🌴",  15_000, 22_000, 5,  0.8f),
         Product("tepung",     "Tepung",      "🌾",  10_000, 14_000, 6,  0.6f),
         Product("kue_lebaran","Kue Lebaran", "🍪",  20_000, 30_000, 6,  0.9f, shelfLifeSeconds = 200f, isFresh = true),
+
+        // === BAB 42: Produk khas daerah ===
+        Product("keripik_singkong","Keripik Singkong","🍠",  5_000,  9_000, 13, 0.6f),
+        Product("opak",            "Opak",            "🫓",  4_000,  7_500, 13, 0.5f),
+        Product("getuk",           "Getuk",           "🍮",  5_000,  8_500, 15, 0.6f),
+        Product("wingko",          "Wingko",          "🥮",  6_000, 10_000, 15, 0.6f),
+        Product("kerupuk_udang",   "Kerupuk Udang",   "🦐",  8_000, 13_000, 17, 0.7f),
+        Product("kopi_lokal",      "Kopi Lokal",      "☕", 10_000, 16_000, 18, 0.8f),
+        Product("pie_susu",        "Pie Susu",        "🥧", 12_000, 18_000, 20, 0.8f),
+        Product("kopi_toraja",     "Kopi Toraja",     "☕", 15_000, 23_000, 22, 0.9f),
     )
 
     fun byId(id: String): Product = all.first { it.id == id }

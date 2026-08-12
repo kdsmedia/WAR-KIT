@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.altomedia.warkit.data.EmployeeBank
 import com.altomedia.warkit.model.CashRegister
+import com.altomedia.warkit.model.MembershipTier
 import com.altomedia.warkit.model.Promotion
 import com.altomedia.warkit.model.SeasonalEvent
 import com.altomedia.warkit.model.SellerCharacter
@@ -113,6 +114,30 @@ class SaveManager(context: Context) {
             put("trainedEmployees", JSONObject().also { obj ->
                 state.trainedEmployees.forEach { (empId, list) ->
                     obj.put(empId, JSONArray().also { arr -> list.forEach { arr.put(it.name) } })
+                }
+            })
+
+            // BAB 41-50
+            put("provinces", JSONArray().also { arr -> state.provinces.forEach { arr.put(it) } })
+            put("membershipTier", state.membershipTier.name)
+            put("paymentLevel", state.paymentLevel)
+            put("natDistActive", state.nationalDist.active)
+            put("natDistLevel", state.nationalDist.level)
+            put("crisisActive", state.supplyCrisis.active)
+            put("crisisDaysLeft", state.supplyCrisis.daysLeft)
+            put("crisisSeverity", state.supplyCrisis.severity)
+            put("nationalAwardReceived", state.nationalAwardReceived)
+            put("nationalCompetitionActive", state.nationalCompetitionActive)
+            put("rajaWarungTitle", state.rajaWarungTitle)
+            put("endlessEmpireUnlocked", state.endlessEmpireUnlocked)
+            put("prestige", state.prestige)
+            put("totalIncomeEarned", state.totalIncomeEarned)
+            put("totalEmployeesHired", state.totalEmployeesHired)
+            put("achievements", JSONArray().also { arr ->
+                state.achievements.forEach { a ->
+                    arr.put(JSONObject().apply {
+                        put("id", a.id); put("progress", a.progress); put("claimed", a.claimed)
+                    })
                 }
             })
         }
@@ -252,6 +277,37 @@ class SaveManager(context: Context) {
                             .getOrNull()?.let { list.add(it) }
                     }
                     state.trainedEmployees[key] = list
+                }
+            }
+
+            // BAB 41-50
+            state.provinces.clear()
+            json.optJSONArray("provinces")?.let { arr ->
+                for (i in 0 until arr.length()) state.provinces.add(arr.getString(i))
+            }
+            state.membershipTier = runCatching {
+                MembershipTier.valueOf(json.optString("membershipTier", "NONE"))
+            }.getOrDefault(MembershipTier.NONE)
+            state.paymentLevel = json.optInt("paymentLevel", 0)
+            state.nationalDist.active = json.optBoolean("natDistActive", false)
+            state.nationalDist.level = json.optInt("natDistLevel", 0)
+            state.supplyCrisis.active = json.optBoolean("crisisActive", false)
+            state.supplyCrisis.daysLeft = json.optInt("crisisDaysLeft", 0)
+            state.supplyCrisis.severity = json.optDouble("crisisSeverity", 0.0).toFloat()
+            state.nationalAwardReceived = json.optBoolean("nationalAwardReceived", false)
+            state.nationalCompetitionActive = json.optBoolean("nationalCompetitionActive", false)
+            state.rajaWarungTitle = json.optBoolean("rajaWarungTitle", false)
+            state.endlessEmpireUnlocked = json.optBoolean("endlessEmpireUnlocked", false)
+            state.prestige = json.optInt("prestige", 0)
+            state.totalIncomeEarned = json.optLong("totalIncomeEarned", 0)
+            state.totalEmployeesHired = json.optInt("totalEmployeesHired", 0)
+            json.optJSONArray("achievements")?.let { arr ->
+                for (i in 0 until arr.length()) {
+                    val o = arr.getJSONObject(i)
+                    state.achievements.find { it.id == o.getString("id") }?.let { a ->
+                        a.progress = o.optInt("progress", 0)
+                        a.claimed = o.optBoolean("claimed", false)
+                    }
                 }
             }
 

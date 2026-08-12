@@ -42,11 +42,14 @@ class CustomerSpawner(private val state: GameState) {
         val type = pickType()
         val unlocked = ProductCatalog.unlocked(state.level)
 
-        // Preferensi: tipe + waktu + cuaca + event (BAB 7, 18, 19, 29, 30)
+        // Preferensi: tipe + waktu + cuaca + event + produk khas daerah (BAB 7,18,19,29,30,42)
         val timePref = state.timeOfDay.preferredProducts()
         val weatherPref = state.weather.boostedProducts()
         val eventPref = state.seasonalEvent.hotProducts()
-        val preferred = (type.preferredProducts() + timePref + weatherPref + eventPref).distinct()
+        val regionalPref = state.provinces.flatMap { id ->
+            com.altomedia.warkit.data.ProvinceBank.regionalByProvince(id).map { it.id }
+        }
+        val preferred = (type.preferredProducts() + timePref + weatherPref + eventPref + regionalPref).distinct()
             .filter { id -> unlocked.any { it.id == id } && state.shelfHas(id) }
         val pool = if (preferred.isNotEmpty()) preferred else unlocked.map { it.id }
         if (pool.isEmpty()) return null

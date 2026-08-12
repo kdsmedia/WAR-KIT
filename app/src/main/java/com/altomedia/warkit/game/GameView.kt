@@ -303,6 +303,34 @@ class GameView @JvmOverloads constructor(
             canvas.drawText("📦 Grosir: +Rp${s.grosirDailyIncome()}/hari",
                 12f, h - 60f, textSmall)
         }
+        // BAB 41: provinsi
+        if (s.provinces.isNotEmpty()) {
+            textSmall.color = Color.parseColor("#00838F"); textSmall.textSize = 12f
+            canvas.drawText("🇮🇩 ${s.provinces.size} provinsi • pelanggan x${s.provinceCustomerMult()}",
+                12f, h - 40f, textSmall)
+        }
+        // BAB 43/44: member & pembayaran
+        if (s.membershipTier != com.altomedia.warkit.model.MembershipTier.NONE ||
+            s.paymentLevel > 0) {
+            textSmall.color = Color.parseColor("#7B1FA2")
+            canvas.drawText("${s.membershipTier.emoji} ${s.paymentMethod().emoji}",
+                w - 260f, if (s.seasonalEvent != com.altomedia.warkit.model.SeasonalEvent.NONE &&
+                    s.promotion != com.altomedia.warkit.model.Promotion.TIDAK_ADA) 108f
+                    else if (s.seasonalEvent != com.altomedia.warkit.model.SeasonalEvent.NONE ||
+                        s.promotion != com.altomedia.warkit.model.Promotion.TIDAK_ADA) 94f else 80f,
+                textSmall)
+        }
+        // BAB 46: krisis pasokan
+        if (s.supplyCrisis.active) {
+            textSmall.color = Color.parseColor("#C62828"); textSmall.textSize = 13f
+            canvas.drawText("⚠️ KRISIS PASOKAN (${s.supplyCrisis.daysLeft}h)",
+                w / 2 - 80f, 70f, textSmall)
+        }
+        // BAB 49: gelar Raja Warung
+        if (s.rajaWarungTitle) {
+            textSmall.color = Color.parseColor("#FFD54F"); textSmall.textSize = 14f
+            canvas.drawText("👑 Raja Warung Indonesia", 12f, h - 20f, textSmall)
+        }
         textSmall.color = Color.parseColor("#5D4037"); textSmall.textSize = 18f
         textBold.color = Color.WHITE
     }

@@ -111,8 +111,9 @@ class GameEngine(val state: GameState) {
             }
             Customer.Phase.PAYING -> {
                 c.waited += dt
-                // BAB 11/25: pegawai kasir + mesin kasir mempercepat pembayaran
-                val payDuration = 0.8f / (state.workSpeedMult() * state.cashRegister().scanSpeed)
+                // BAB 11/25/44: pegawai kasir + mesin kasir + pembayaran digital
+                val payDuration = 0.8f / (state.workSpeedMult() * state.cashRegister().scanSpeed *
+                    state.paymentMethod().speedMult)
                 if (c.waited >= payDuration) {
                     state.completePurchase(c)
                     c.phase = Customer.Phase.LEAVING
