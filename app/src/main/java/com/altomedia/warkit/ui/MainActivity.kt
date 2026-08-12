@@ -28,9 +28,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var gameView: GameView
     private lateinit var save: SaveManager
 
-    private var dayTimerSec = 0f
-    private val dayLength = 120f  // 120 detik gameplay = 1 hari (BAB 7)
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -60,6 +57,21 @@ class MainActivity : AppCompatActivity() {
             state.openShop()
             gameView.resetTimer()
         }
+
+        // Day timer: maju hari tiap [dayLength] detik gameplay (BAB 18/20)
+        dayHandler.postDelayed(dayRunnable, (dayLength * 1000).toLong())
+    }
+
+    private val dayLength = 120f  // 120 detik gameplay = 1 hari
+    private val dayHandler = android.os.Handler(android.os.Looper.getMainLooper())
+    private val dayRunnable = object : Runnable {
+        override fun run() {
+            if (state.shopOpen) {
+                state.advanceDay()
+                maybeShowCutscene()
+            }
+            dayHandler.postDelayed(this, (dayLength * 1000).toLong())
+        }
     }
 
     private fun buildLayout(): FrameLayout {
@@ -79,8 +91,10 @@ class MainActivity : AppCompatActivity() {
         val btnSize = 140
         btnBar.addView(actionBtn("🏪", "Gudang", 0xFFE76F51.toInt()) { openWarehouse() })
         btnBar.addView(actionBtn("⬆️", "Upgrade", 0xFF6D4C41.toInt()) { openUpgrade() })
+        btnBar.addView(actionBtn("🧑‍💼", "Pegawai", 0xFF1E88E5.toInt()) { openEmployees() })
+        btnBar.addView(actionBtn("🎨", "Dekorasi", 0xFF8E24AA.toInt()) { openDecorations() })
         btnBar.addView(actionBtn("🛒", "Produk", 0xFFF4A261.toInt()) { openProducts() })
-        btnBar.addView(actionBtn("🎯", "Misi", 0xFF1E88E5.toInt()) { openMissions() })
+        btnBar.addView(actionBtn("🎯", "Misi", 0xFF43A047.toInt()) { openMissions() })
         val btnLp = FrameLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             btnSize + 24
@@ -159,11 +173,34 @@ class MainActivity : AppCompatActivity() {
     private fun openMissions() {
         MissionDialog(this, state) { save.save(state) }.show()
     }
+    private fun openEmployees() {
+        EmployeeDialog(this, state) { save.save(state) }.show()
+    }
+    private fun openDecorations() {
+        DecorationDialog(this, state) { save.save(state) }.show()
+    }
+
+    /** Trigger cutscene BAB 20 saat reputasi mencapai tier tertentu (sekali). */
+    private var cutsceneShown = false
+    private fun maybeShowCutscene() {
+        if (cutsceneShown) return
+        if (state.reputation >= 700) {  // Warung Terkenal
+            cutsceneShown = true
+            CutsceneDialog(this) {
+                save.save(state)
+            }.show()
+        }
+    }
 
     override fun onPause() {
         super.onPause()
         state.closeShop()
         save.save(state)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        dayHandler.removeCallbacks(dayRunnable)
     }
 
     override fun onResume() {

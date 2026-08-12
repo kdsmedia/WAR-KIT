@@ -2,7 +2,11 @@ package com.altomedia.warkit.core
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.altomedia.warkit.data.EmployeeBank
 import com.altomedia.warkit.model.SellerCharacter
+import com.altomedia.warkit.model.Supplier
+import com.altomedia.warkit.model.TimeOfDay
+import com.altomedia.warkit.model.Weather
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -56,6 +60,18 @@ class SaveManager(context: Context) {
             // Missions
             put("missions", missionsToJson(state.missions))
             put("dailyMissions", missionsToJson(state.dailyMissions))
+
+            // BAB 11-19
+            put("employees", JSONArray().also { arr ->
+                state.employees.forEach { arr.put(it.id) }
+            })
+            put("supplier", state.supplier.name)
+            put("decorations", JSONArray().also { arr ->
+                state.decorations.forEach { arr.put(it) }
+            })
+            put("timeOfDay", state.timeOfDay.name)
+            put("weather", state.weather.name)
+            put("totalVipServed", state.totalVipServed)
         }
         prefs.edit().putString("state", json.toString()).putLong("savedAt", now).apply()
         state.lastSavedAt = now
@@ -113,6 +129,29 @@ class SaveManager(context: Context) {
             // Missions
             state.missions = jsonToMissions(json.optJSONArray("missions"))
             state.dailyMissions = jsonToMissions(json.optJSONArray("dailyMissions"))
+
+            // BAB 11-19
+            state.employees.clear()
+            json.optJSONArray("employees")?.let { arr ->
+                for (i in 0 until arr.length()) {
+                    val id = arr.getString(i)
+                    EmployeeBank.all.firstOrNull { it.id == id }?.let { state.employees.add(it) }
+                }
+            }
+            state.supplier = runCatching {
+                Supplier.valueOf(json.optString("supplier", "DISTRIBUTOR_DESA"))
+            }.getOrDefault(Supplier.DISTRIBUTOR_DESA)
+            state.decorations.clear()
+            json.optJSONArray("decorations")?.let { arr ->
+                for (i in 0 until arr.length()) state.decorations.add(arr.getString(i))
+            }
+            state.timeOfDay = runCatching {
+                TimeOfDay.valueOf(json.optString("timeOfDay", "PAGI"))
+            }.getOrDefault(TimeOfDay.PAGI)
+            state.weather = runCatching {
+                Weather.valueOf(json.optString("weather", "CERAH"))
+            }.getOrDefault(Weather.CERAH)
+            state.totalVipServed = json.optInt("totalVipServed", 0)
 
             savedAt
         } catch (e: Exception) {

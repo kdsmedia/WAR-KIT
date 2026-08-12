@@ -55,6 +55,14 @@ class WarehouseDialog(
         }
         root.addView(upgBtn)
 
+        // Link supplier (BAB 13)
+        root.addView(Button(ctx).apply {
+            text = "🚚 Supplier aktif: ${state.supplier.displayName} (ubah)"
+            setOnClickListener {
+                SupplierDialog(context, state) { onChange() }.show()
+            }
+        })
+
         // Daftar produk untuk dibeli stoknya
         root.addView(subTitle("BELI STOK PRODUK"))
         for (p in ProductCatalog.unlocked(state.level)) {
@@ -77,8 +85,9 @@ class WarehouseDialog(
                 setTextColor(Color.parseColor("#5D4037"))
                 setPadding(8, 0, 8, 0)
             })
+            val buyPrice = state.effectiveBuyPrice(p.id)
             val buy10 = Button(ctx).apply {
-                text = "+10\nRp${p.buyPrice * 10}"
+                text = "+10\nRp${buyPrice * 10}"
                 textSize = 10f
                 setOnClickListener {
                     if (state.buyStock(p.id, 10)) onChange()
@@ -86,7 +95,7 @@ class WarehouseDialog(
                 }
             }
             val buy50 = Button(ctx).apply {
-                text = "+50\nRp${p.buyPrice * 50}"
+                text = "+50\nRp${buyPrice * 50}"
                 textSize = 10f
                 setOnClickListener {
                     if (state.buyStock(p.id, 50)) onChange()

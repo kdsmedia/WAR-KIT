@@ -47,7 +47,8 @@ data class Customer(
     var y: Float = 0f,
     var phase: Phase = Phase.ENTERING,
     var bill: Int = 0,                // total yang harus dibayar
-    var pickedItems: Int = 0
+    var pickedItems: Int = 0,
+    var isVip: Boolean = false        // BAB 16: pelanggan VIP
 ) {
     /** State machine sederhana untuk alur pelanggan. */
     enum class Phase { ENTERING, PICKING, QUEUING, PAYING, LEAVING, DONE }

@@ -5,10 +5,15 @@ import com.altomedia.warkit.data.ProductCatalog
 import com.altomedia.warkit.data.ShelfConfig
 import com.altomedia.warkit.data.type
 import com.altomedia.warkit.model.Customer
+import com.altomedia.warkit.model.Employee
 import com.altomedia.warkit.model.Mission
 import com.altomedia.warkit.model.MissionType
+import com.altomedia.warkit.model.ReputationTier
 import com.altomedia.warkit.model.SellerCharacter
 import com.altomedia.warkit.model.ShelfItem
+import com.altomedia.warkit.model.Supplier
+import com.altomedia.warkit.model.TimeOfDay
+import com.altomedia.warkit.model.Weather
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**
@@ -53,7 +58,17 @@ class GameState {
         "beras" to 5, "mi_instan" to 12, "minyak" to 8, "air" to 10, "telur" to 10
     )
     var warehouseLevel: Int = 1
-    val warehouseCapacity: Int get() = 200 + (warehouseLevel - 1) * 150
+    // BAB 12: 100/250/500 slot (+ lanjutan)
+    val warehouseCapacity: Int get() = when (warehouseLevel) {
+        1 -> 100
+        2 -> 250
+        3 -> 500
+        else -> 500 + (warehouseLevel - 3) * 250
+    }
+    fun upgradeWarehouseCost(): Int {
+        val mult = seller?.upgradeCostMultiplier() ?: 1f
+        return ((1_500_000 * warehouseLevel) * mult).toInt()
+    }
 
     // Pelanggan aktif di layar.
     val customers: MutableList<Customer> = CopyOnWriteArrayList()
@@ -71,6 +86,61 @@ class GameState {
     var sessionIncome: Long = 0
     var lastIncome: Int = 0
     var lastSavedAt: Long = 0
+
+    // === BAB 11: Pegawai ===
+    val employees: MutableList<Employee> = mutableListOf()
+    fun hasCashier(): Boolean = employees.any { it.role == Employee.Role.CASHIER }
+    fun workSpeedMult(): Float = employees.fold(1f) { acc, e -> acc * e.workSpeed }
+    fun employeeFriendliness(): Int = employees.sumOf { it.friendliness }
+    fun employeeEfficiency(): Int = employees.sumOf { it.efficiency }
+
+    // === BAB 13: Supplier ===
+    var supplier: Supplier = Supplier.DISTRIBUTOR_DESA
+    fun supplierUnlocked(level: Int): List<Supplier> =
+        Supplier.entries.filter { it.unlockLevel <= level }
+
+    // === BAB 15: Dekorasi ===
+    val decorations: MutableList<String> = mutableListOf()
+    fun decorationReputation(): Int = decorations.sumOf {
+        com.altomedia.warkit.data.DecorationBank.byId(it).reputationBoost
+    }
+    fun decorationVipBoost(): Float = decorations.fold(0f) { acc, id ->
+        acc + com.altomedia.warkit.data.DecorationBank.byId(id).vipBoost
+    }
+
+    // === BAB 18: Waktu ===
+    var timeOfDay: TimeOfDay = TimeOfDay.PAGI
+    var periodTimer: Float = 0f  // detik tersisa periode ini
+
+    // === BAB 19: Cuaca ===
+    var weather: Weather = Weather.CERAH
+    var nextWeatherChange: Int = 3  // ganti cuaca tiap N hari
+
+    // === BAB 16: VIP tracking ===
+    var totalVipServed: Int = 0
+
+    /** Tier reputasi saat ini (BAB 17). */
+    fun reputationTier(): ReputationTier = ReputationTier.at(
+        reputation + decorationReputation()
+    )
+
+    /** Peluang VIP total: karakter + tier reputasi + dekorasi (BAB 16 & 17). */
+    fun vipChance(): Float {
+        val base = (seller?.vipChance() ?: 0.03f)
+        val tier = reputationTier().vipChanceBonus
+        return base + tier + decorationVipBoost()
+    }
+
+    /** Multiplier jumlah pelanggan: tier reputasi * cuaca (BAB 17 & 19). */
+    fun customerSpawnMult(): Float =
+        reputationTier().customerMult * weather.customerMult()
+
+    /** Biaya operasional harian pegawai (dikurangi efisiensi). */
+    fun dailyWage(): Int {
+        val raw = employees.sumOf { it.dailyWage }
+        val discount = raw * employeeEfficiency() / 100
+        return (raw - discount).coerceAtLeast(0)
+    }
 
     // === EXP & Level (BAB 8) ===
     fun expToNext(): Int = level * 100
@@ -102,25 +172,44 @@ class GameState {
 
     /**
      * Menyelesaikan transaksi pelanggan. Menghasilkan uang + EXP + reputasi,
-     * dan menambah progress misi.
+     * dan menambah progress misi. Pegawai (BAB 11) menambah kecepatan & reputasi.
+     * VIP (BAB 16) memberi bonus diamond & reputasi ekstra.
      */
     fun completePurchase(c: Customer) {
         val s = seller
         val profitMult = s?.profitMultiplier() ?: 1f
+        // Efisiensi pegawai mengurangi biaya -> menambah margin (BAB 11)
+        val effBonus = 1f + (employeeEfficiency() / 100f)
         val totalBill = c.bill
-        val baseProfit = (totalBill * profitMult).toInt()
+        val baseProfit = (totalBill * profitMult * effBonus).toInt()
         val satisfactionBonus = c.satisfactionBonus()
-        val earned = baseProfit + satisfactionBonus * 500
+        var earned = baseProfit + satisfactionBonus * 500
 
         money += earned
         sessionIncome += earned
         lastIncome = earned
-        reputation += (s?.reputationBonus() ?: 1)
+        val repGain = (s?.reputationBonus() ?: 1) + employeeFriendliness() + satisfactionBonus
+        reputation += repGain
         addExp(10 + (s?.expBonus() ?: 0))
+
+        // BAB 16: bonus VIP
+        if (c.isVip) {
+            earned += 50_000
+            money += 50_000
+            sessionIncome += 50_000
+            diamond += 1
+            reputation += 5
+            totalVipServed++
+        }
 
         customersServedToday++
         totalCustomersServed++
         totalProductsSold += c.pickedItems
+
+        // Pelayanan buruk (MARAH) menurunkan reputasi (BAB 17)
+        if (c.satisfaction == com.altomedia.warkit.model.Satisfaction.MARAH) {
+            reputation = (reputation - 2).coerceAtLeast(0)
+        }
 
         updateMissions(MissionType.SERVE_CUSTOMERS, 1)
         updateMissions(MissionType.LEVEL_UP, level)
@@ -129,11 +218,12 @@ class GameState {
         }
     }
 
-    // === Stok (BAB 4) ===
+    // === Stok (BAB 4 & BAB 13: supplier) ===
     /** Beli stok ke supplier: uang berkurang, masuk ke gudang. */
     fun buyStock(productId: String, qty: Int): Boolean {
         val product = ProductCatalog.byId(productId)
-        val cost = product.buyPrice * qty
+        val unitPrice = supplier.effectiveBuy(product.buyPrice)  // BAB 13
+        val cost = unitPrice * qty
         if (money < cost) return false
         val currentTotal = warehouse.values.sum()
         if (currentTotal + qty > warehouseCapacity) return false
@@ -142,6 +232,12 @@ class GameState {
         restockCount++
         updateMissions(MissionType.RESTOCK, 1)
         return true
+    }
+
+    /** Harga beli efektif produk (untuk ditampilkan di UI). */
+    fun effectiveBuyPrice(productId: String): Int {
+        val product = ProductCatalog.byId(productId)
+        return supplier.effectiveBuy(product.buyPrice)
     }
 
     /** Pindahkan stok dari gudang ke rak. */
@@ -197,16 +293,43 @@ class GameState {
         return true
     }
 
-    fun upgradeWarehouseCost(): Int {
-        val mult = seller?.upgradeCostMultiplier() ?: 1f
-        return ((1_500_000 * warehouseLevel) * mult).toInt()
-    }
-
     fun upgradeWarehouse(): Boolean {
         val cost = upgradeWarehouseCost()
         if (money < cost) return false
         money -= cost
         warehouseLevel++
+        return true
+    }
+
+    // === BAB 11: Pegawai ===
+    fun hireEmployee(emp: Employee): Boolean {
+        if (employees.any { it.id == emp.id }) return false
+        if (money < emp.hireCost) return false
+        money -= emp.hireCost
+        employees.add(emp)
+        return true
+    }
+
+    fun fireEmployee(emp: Employee) { employees.remove(emp) }
+
+    // === BAB 13: Supplier ===
+    fun unlockSupplier(s: Supplier): Boolean {
+        if (s.unlockLevel > level) return false
+        if (supplier.ordinal >= s.ordinal) return false
+        if (money < s.unlockCost) return false
+        money -= s.unlockCost
+        supplier = s
+        return true
+    }
+
+    // === BAB 15: Dekorasi ===
+    fun buyDecoration(id: String): Boolean {
+        if (decorations.contains(id)) return false
+        val d = com.altomedia.warkit.data.DecorationBank.byId(id)
+        if (money < d.cost) return false
+        money -= d.cost
+        decorations.add(id)
+        reputation += d.reputationBoost
         return true
     }
 
@@ -263,10 +386,36 @@ class GameState {
         return income
     }
 
-    /** Estimasi pendapatan idle per detik berdasar level & reputasi. */
+    /** Estimasi pendapatan idle per detik berdasar level & reputasi (BAB 5 & 11). */
     fun idleRatePerSecond(): Float {
         val base = (level * 50 + reputation * 5)
         val customerBonus = totalCustomersServed.coerceAtMost(500) * 2
-        return (base + customerBonus).toFloat()
+        // Pegawai & tier reputasi meningkatkan idle income
+        val empMult = workSpeedMult()
+        val tierMult = reputationTier().customerMult
+        return ((base + customerBonus) * empMult * tierMult)
+    }
+
+    /** Maju ke hari berikutnya: gaji pegawai, reset cuaca, cek misi harian. */
+    fun advanceDay() {
+        day++
+        val wage = dailyWage()
+        money -= wage
+        customersServedToday = 0
+        // Ganti cuaca secara periodik (BAB 19)
+        if (day % nextWeatherChange == 0) {
+            weather = Weather.entries.random()
+        }
+        checkDailyReset()
+    }
+
+    /** Update waktu siang/malam (BAB 18). Dipanggil tiap detik dari engine. */
+    fun tickTimeOfDay(dt: Float) {
+        periodTimer += dt
+        if (periodTimer >= TimeOfDay.PERIOD_SECONDS) {
+            periodTimer = 0f
+            val idx = TimeOfDay.cycle.indexOf(timeOfDay)
+            timeOfDay = TimeOfDay.cycle[(idx + 1) % TimeOfDay.cycle.size]
+        }
     }
 }

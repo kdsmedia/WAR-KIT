@@ -189,10 +189,17 @@ class GameView @JvmOverloads constructor(
                 com.altomedia.warkit.model.CustomerType.PETANI -> Color.parseColor("#8D6E63")
                 com.altomedia.warkit.model.CustomerType.KARYAWAN -> Color.parseColor("#5C6BC0")
             }
-            canvas.drawCircle(c.x, c.y, 22f, custPaint)
+            // BAB 16: VIP lebih besar + badge bintang
+            val radius = if (c.isVip) 28f else 22f
+            canvas.drawCircle(c.x, c.y, radius, custPaint)
             // Emoji kepala
-            textPaint.textSize = 26f
+            textPaint.textSize = if (c.isVip) 30f else 26f
             canvas.drawText(c.type.emoji, c.x - 13f, c.y - 18f, textPaint)
+            // Badge VIP
+            if (c.isVip) {
+                textPaint.textSize = 18f
+                canvas.drawText("⭐", c.x + 14f, c.y - 18f, textPaint)
+            }
 
             // Bar kesabaran
             val patienceFrac = (1f - (c.waited / c.patience)).coerceIn(0f, 1f)
@@ -242,14 +249,23 @@ class GameView @JvmOverloads constructor(
         canvas.drawText("EXP ${s.exp}/${s.expToNext()}", lvX + 4f, 54f, textSmall)
         textSmall.textSize = 18f; textSmall.color = Color.parseColor("#5D4037")
 
-        // Reputasi
-        canvas.drawText("⭐ ${s.reputation}", lvX + 140f, 36f, textBold)
+        // Reputasi + tier (BAB 17)
+        val tier = s.reputationTier()
+        canvas.drawText("⭐ ${s.reputation + s.decorationReputation()}", lvX + 140f, 36f, textBold)
+        textSmall.color = Color.parseColor("#FFD54F"); textSmall.textSize = 12f
+        canvas.drawText("${tier.emoji} ${tier.displayName}", lvX + 140f, 52f, textSmall)
+        textSmall.color = Color.parseColor("#5D4037"); textSmall.textSize = 18f
         // Hari
-        canvas.drawText("📅 Hari ${s.day}", lvX + 140f, 64f, textBold)
+        canvas.drawText("📅 Hari ${s.day}", lvX + 280f, 36f, textBold)
+        // Waktu & cuaca (BAB 18 & 19)
+        textSmall.color = Color.WHITE; textSmall.textSize = 12f
+        canvas.drawText("${s.timeOfDay.emoji} ${s.timeOfDay.displayName}", lvX + 280f, 52f, textSmall)
+        canvas.drawText("${s.weather.emoji} ${s.weather.displayName}", lvX + 280f, 66f, textSmall)
+        textSmall.color = Color.parseColor("#5D4037"); textSmall.textSize = 18f
         // Pendapatan sesi
         canvas.drawText("📈 Rp${formatMoney(s.sessionIncome)}", w - 260f, 36f, textBold)
-        // Pelanggan dilayani
-        canvas.drawText("👥 ${s.totalCustomersServed}", w - 260f, 64f, textBold)
+        // Pelanggan dilayani + pegawai
+        canvas.drawText("👥 ${s.totalCustomersServed} | 🧑‍💼 ${s.employees.size}", w - 260f, 64f, textBold)
         // Status warung
         val status = if (s.shopOpen) "WARUNG BUKA" else "WARUNG TUTUP"
         textBold.color = if (s.shopOpen) Color.parseColor("#A5D6A7") else Color.parseColor("#EF9A9A")

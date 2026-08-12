@@ -32,6 +32,14 @@ object ProductCatalog {
         // === Level 8 ===
         Product("shampoo",   "Shampoo",      "🧴",  15_000, 18_000, 8, 0.5f),
         Product("susu",      "Susu Kotak",   "🥛",   7_000,  9_000, 8, 0.8f),
+
+        // === BAB 14: Produk kategori baru (Level 9-11) ===
+        Product("deterjen",  "Deterjen",     "🧽",  12_000, 16_000, 9,  0.5f),
+        Product("sikat_gigi","Sikat Gigi",   "🪥",   4_000,  6_500, 9,  0.5f),
+        Product("pasta_gigi","Pasta Gigi",   "🪥",   7_000, 10_000, 9,  0.6f),
+        Product("biskuit",   "Biskuit",      "🥠",   6_000,  8_500, 10, 1.0f),
+        Product("permen",    "Permen",       "🍭",   2_000,  3_000, 10, 1.1f),
+        Product("saus",      "Saus",         "🍅",   5_000,  7_500, 11, 0.6f),
     )
 
     fun byId(id: String): Product = all.first { it.id == id }

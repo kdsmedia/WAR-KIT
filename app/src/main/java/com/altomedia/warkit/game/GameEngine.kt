@@ -36,8 +36,8 @@ class GameEngine(val state: GameState) {
     fun update(dt: Float) {
         if (!state.shopOpen) return
 
-        // Hari berganti tiap 120 detik gameplay (simulasi)
-        // (tracking day dipisah; di-handle di MainActivity via timer)
+        // BAB 18: maju periode waktu
+        state.tickTimeOfDay(dt)
 
         // Spawn pelanggan
         spawnTimer += dt
@@ -109,7 +109,9 @@ class GameEngine(val state: GameState) {
             }
             Customer.Phase.PAYING -> {
                 c.waited += dt
-                if (c.waited >= 0.8f) {
+                // BAB 11: pegawai kasir mempercepat pembayaran
+                val payDuration = 0.8f / state.workSpeedMult()
+                if (c.waited >= payDuration) {
                     state.completePurchase(c)
                     c.phase = Customer.Phase.LEAVING
                     c.waited = 0f
