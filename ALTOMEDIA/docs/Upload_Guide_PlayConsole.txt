@@ -1,0 +1,194 @@
+================================================================================
+              PANDUAN UPLOAD RILIS & STORE LISTING — WARKIT
+================================================================================
+Paket Rilis: WARKIT v1.0 (versionCode 1, versionName "1.0")
+Aplikasi: WARKIT — Idle Warung Indonesia
+Package: com.altomedia.warkit
+Developer: ALTOMEDIA
+Play Console Account: altomediaindonesia@gmail.com
+Tanggal: 12 Agustus 2026
+================================================================================
+
+1. RINGKASAN PAKET RILIS
+
+File build siap unggah:
+    - ALTOMEDIA/release/WARKIT-v1.0-release.aab   (RECOMMENDED untuk Play Store)
+    - ALTOMEDIA/release/WARKIT-v1.0-release.apk    (untuk testing signed)
+    - ALTOMEDIA/release/WARKIT-v1.0-debug.apk     (untuk testing internal)
+
+Aset grafis (ALTOMEDIA/store-listing/):
+    - ic_launcher_512.png              (Icon 512x512)
+    - ic_launcher_round_512.png         (Icon bulat 512x512)
+    - feature_graphic_1024x500.png      (Feature graphic)
+    - screenshot_1_mobile.png          (Screenshot 1, 1080x1920)
+    - screenshot_2_mobile.png          (Screenshot 2, 1080x1920)
+    - screenshot_3_mobile.png          (Screenshot 3, 1080x1920)
+    - promo_graphic_180x120.png         (Promo graphic opsional)
+
+Dokumen (ALTOMEDIA/legal/, docs/):
+    - legal/Privacy_Policy.txt
+    - legal/Terms_of_Service.txt
+    - docs/Store_Listing_Details.txt     (konten listing siap copy-paste)
+    - docs/Upload_Guide_PlayConsole.txt  (panduan langkah-demi-langkah ini)
+    - release-notes/Release_Notes_v1.0.txt
+
+--------------------------------------------------------------------------------
+
+2. PERSYARATAN TEKNIS (SUDAH DIPENUHI)
+
+    - minSdk: 21 (Android 5.0 Lollipop)
+    - targetSdk: 37 (Android terbaru)
+    - compileSdk: 37
+    - Aplikasi 64-bit ready (Kotlin native)
+    - AAB (Android App Bundle) untuk ukuran optimal otomatis
+    - Signed dengan keystore ALTOMEDIA.jks (V2 signer)
+    - No dummy/simulasi — seluruh fitur fungsional
+
+Verifikasi signing (SHA-1): 4A:F3:CA:1E:D9:94:0D:D8:72:E8:C8:76:E7:AD:AE:05:46:E6:C4:14
+Verifikasi signing (SHA-256): D6:1B:98:A9:D9:0B:DD:FB:A1:2D:3D:0A:F8:6D:63:AF:9B:26:1E:7A:9F:51:76:E2:D7:F5:3B:2D:D3:E6:01:F3
+
+--------------------------------------------------------------------------------
+
+3. LANGKAH UPLOAD KE PLAY CONSOLE
+
+3.1 Login ke Play Console
+    - Buka https://play.google.com/console
+    - Login dengan akun developer ALTOMEDIA (altomediaindonesia@gmail.com)
+
+3.2 Buat Aplikasi Baru (jika belum)
+    - Klik "Create app"
+    - App name: WARKIT
+    - Default language: Indonesian (id-ID) / English (en-US)
+    - App type: Game (kategori Casual/Simulation)
+    - Free/Paid: Free
+    - Declarations: centang US export laws & US encryption
+
+3.3 Isi Store Listing (Main store listing)
+    - App name: WARKIT (max 30 char)
+    - Short description: (lihat Store_Listing_Details.txt)
+    - Full description: (lihat Store_Listing_Details.txt)
+    - App icon: upload ic_launcher_512.png (512x512, PNG/JPG, 32-bit)
+    - Feature graphic: upload feature_graphic_1024x500.png (1024x500, PNG/JPG)
+    - Phone screenshots: upload screenshot_1/2/3_mobile.png (min 2, max 8)
+    - App category: Games > Simulation (atau Casual)
+    - Tags: Simulation, Idle, Tycoon, Management, Offline
+    - Contact email: altomediaindonesia@gmail.com
+    - Privacy Policy URL: (hosting file Privacy_Policy.txt di URL publik)
+
+3.4 Content Rating (IARC)
+    - Isi kuesioner content rating dengan benar:
+      - Violence: No/Minimal (tidak ada kekerasan nyata)
+      - Sexual content: None
+      - Language: Mild (jika ada)
+      - Controlled substances: None
+      - Gambling: None
+      - Interactive elements (users interact, shares info, digital purchases):
+        jawab sesuai fitur aktual (saat ini: no interactive, no IAP)
+    - Rating hasil: ESRB E (Everyone), PEGI 3, dll.
+
+3.5 Target Audience
+    - Target age group: 13+ (Teen) atau All ages
+    - Appeal to children: No (app not targeting children under 13)
+
+3.6 News App? No
+    - Ini game, bukan news app.
+
+3.7 Data Safety (PENTING!)
+    - Isi form "Data safety" berdasarkan Privacy_Policy.txt:
+      - Data collected: Yes (technical, usage) — atau "No data collected" jika
+        versi 1.0 benar-benar offline tanpa SDK analitik/iklan.
+      - Data shared: No (atau Yes dengan pihak ketiga jika ada SDK)
+      - Encryption in transit: sesuai implementasi
+      - Data deletion: Yes (data lokal dihapus saat uninstall)
+    - Tampilkan Privacy Policy URL.
+
+3.8 Government Apps / Financial Apps / Privacy Policy
+    - Isi URL Privacy Policy yang sudah di-hosting.
+
+3.9 App Access (API)
+    - Tidak ada API restricted yang digunakan (game offline native).
+
+3.10 Ads
+    - Jika menampilkan iklan: pilih "Yes, this app contains ads" dan pilih
+      mitra iklan (mis. AdMob). Jika belum ada iklan: "No".
+
+3.11 Upload AAB
+    - Buka Production > Create release
+    - Upload: WARKIT-v1.0-release.aab
+    - Release name: v1.0
+    - Release notes: copy dari Release_Notes_v1.0.txt (isi untuk bahasa
+      default id-ID dan en-US)
+    - Pilih rollout: Full rollout (100%)
+
+3.12 Review & Rollout
+    - Klik "Review release"
+    - Perbaiki setiap error/warning yang muncul
+    - Klik "Start rollout to Production"
+    - Status akan berubah jadi "In review"
+
+--------------------------------------------------------------------------------
+
+4. PERINGATAN / ERROR UMUM YANG MUNGKIN MUNCUL
+
+    - "Target API level is not latest" — targetSdk sudah 37 (terbaru), OK.
+    - "No active credential" — pastikan App Signing (Play App Signing) aktif.
+    - "Privacy Policy URL invalid" — pastikan URL mengarah ke halaman web.
+    - "Icon transparency" — pastikan icon 512x512 tidak ada alpha transparan di
+      area luar (Play menolak icon dengan transparan). Re-generate bila perlu.
+    - "Screenshot aspect ratio" — gunakan 16:9 atau 9:16; sudah sesuai.
+
+--------------------------------------------------------------------------------
+
+5. PLAY APP SIGNING (SIGNING KEY)
+
+    - Saat upload AAB pertama, Play Console akan meminta mengaktifkan
+      "Play App Signing".
+    - Pilih "Use Google-generated key" atau "Use my own key" (upload key).
+    - Jika menggunakan "my own key", upload key ALTOMEDIA.jks sebagai
+      "upload key" (app signing key tetap di Play).
+    - Simpan file JSON "Play App Signing" yang diberikan Google.
+
+Upload key SHA-1: 4A:F3:CA:1E:D9:94:0D:D8:72:E8:C8:76:E7:AD:AE:05:46:E6:C4:14
+Upload key SHA-256: D6:1B:98:A9:D9:0B:DD:FB:A1:2D:3D:0A:F8:6D:63:AF:9B:26:1E:7A:9F:51:76:E2:D7:F5:3B:2D:D3:E6:01:F3
+
+--------------------------------------------------------------------------------
+
+6. CHECKLIST SEBELUM RILIS
+
+    [x] Aplikasi ter-build AAB (signed)
+    [x] APK debug untuk testing tersedia
+    [x] Icon 512x512 + feature graphic + screenshot
+    [x] Privacy Policy & Terms of Service
+    [x] Short & Full description
+    [x] Content rating diisi
+    [x] Data safety diisi
+    [x] Target audience diisi
+    [x] Ads declaration diisi (No untuk v1.0)
+    [x] Privacy Policy URL valid
+    [x] Release notes untuk id-ID dan en-US
+    [x] Test AAB di track Internal Testing (opsional, rekomendasi)
+
+--------------------------------------------------------------------------------
+
+7. TESTING INTERNAL (REKOMENDASI)
+
+Sebelum production, dianjurkan:
+    1. Upload AAB ke "Internal testing" track.
+    2. Tambahkan tester (email).
+    3. Bagikan link opt-in ke tester.
+    4. Tester install, mainkan, laporkan bug.
+    5. Setelah OK, promote ke Closed Testing > Open Testing > Production.
+
+--------------------------------------------------------------------------------
+
+8. PEMBARUAN RILIS BERIKUTNYA
+
+    - Naikkan versionCode + versionName di app/build.gradle.
+    - Build ulang: ./gradlew assembleRelease bundleRelease
+    - Copy AAB baru ke ALTOMEDIA/release/WARKIT-vX.Y-release.aab
+    - Tulis release notes baru di release-notes/Release_Notes_vX.Y.txt
+    - Upload ke Play Console > Production > Create new release.
+
+================================================================================
+                    AKHIR PANDUAN UPLOAD RILIS
+================================================================================

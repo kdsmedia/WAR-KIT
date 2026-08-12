@@ -1,0 +1,91 @@
+================================================================================
+                 CATATAN RILIS (RELEASE NOTES) — WARKIT v1.0
+================================================================================
+Aplikasi: WARKIT — Idle Warung Indonesia
+Package: com.altomedia.warkit
+Versi: 1.0 (versionCode 1)
+Tanggal: 12 Agustus 2026
+Developer: ALTOMEDIA
+================================================================================
+
+PEMBAHARUAN v1.0 (RILIS PERDANA):
+
+🎉 Selamat datang di WARKIT — Idle Warung Indonesia! Rilis perdana game simulasi
+idle bertema warung Indonesia ini hadir dengan 50 bab fitur lengkap.
+
+✨ FITUR BARU:
+• 50+ produk warung (sembako, makanan, minuman, sayur, buah, produk khas daerah)
+• Sistem pelanggan & antrean kasir real-time
+• 10+ pegawai dengan peran unik (kasir, stoker, pembersih, manajer)
+• Sistem supplier & produk segar dengan masa simpan
+• Sistem cuaca (cerah, hujan, berawan) & waktu (pagi, siang, sore, malam)
+• Pelanggan VIP & sistem reputasi 6 tier
+• Dekorasi warung untuk kenyamanan
+• Sistem promosi (diskon, beli 2 gratis 1, paket hemat, cashback)
+• Sistem cabang & manajer cabang (BAB 21/22)
+• Kendaraan distribusi (motor, pickup, truk engkel, truk box, trailer)
+• Event musiman: Ramadhan, Lebaran, Festival Belanja
+• Investor dengan target 30 hari (BAB 31)
+• Toko Grosir untuk pendapatan besar harian (BAB 32)
+• Sistem pajak harian (BAB 36)
+• Pelatihan pegawai (pelayanan, stok, kebersihan, kecepatan, keamanan)
+• Upgrade bangunan (Kayu → Semi → Modern → Minimarket) + fasilitas
+• Ekspansi 10 provinsi + produk khas daerah (BAB 41/42)
+• Program member Silver/Gold/Platinum (BAB 43)
+• Pembayaran digital: QRIS & Dompet Digital (BAB 44)
+• Pusat Distribusi Nasional (BAB 45)
+• Krisis pasokan dengan 3 pilihan penanganan (BAB 46)
+• Penghargaan nasional + cutscene (BAB 47)
+• Persaingan tingkat nasional (BAB 48)
+• Gelar "Raja Warung Indonesia" + skin emas (BAB 49)
+• Mode Endless Empire dengan 13 achievement & prestise (BAB 50)
+
+🔧 TEKNIS:
+• minSdk 21 (Android 5.0), targetSdk 37 (Android terbaru)
+• Native Android Kotlin + Canvas 2D (tanpa engine berat)
+• Offline — tanpa koneksi internet
+• Save otomatis (SharedPreferences)
+• Ukuran APK ~2.6 MB (sangat ringan)
+• AAB signed dengan keystore ALTOMEDIA.jks
+
+📋 POLISI & KEAMANAN:
+• Tidak ada iklan pada v1.0
+• Tidak ada pembelian dalam aplikasi pada v1.0
+• Tidak mengakses izin berisiko tinggi (kamera, lokasi, kontak, mikrofon)
+• Data permainan disimpan lokal di perangkat
+• Tinduk Kebijakan Privasi & Syarat Layanan yang transparan
+
+📱 KOMPATIBILITAS:
+• Android 5.0 (API 21) ke atas
+• Orientasi landscape (dirancang untuk gameplay lebar)
+• Mendukung tablet & ponsel
+
+Terima kasih telah bermain WARKIT! Bangun warung kecilmu menjadi kerajaan
+bisnis terbesar se-Indonesia. Perjalananmu baru saja dimulai.
+
+— Tim ALTOMEDIA
+
+================================================================================
+                  AKHIR CATATAN RILIS v1.0
+================================================================================
+
+
+================================================================================
+ TEMPLATE CATATAN RILIS UNTUK BUILD BERIKUTNYA (salin & isi):
+================================================================================
+
+Catatan Rilis WARKIT vX.Y (versionCode N)
+Tanggal: <DD/MM/YYYY>
+
+Pembaruan vX.Y:
+• [fitur baru / perbaikan / optimasi]
+
+Perbaikan bug:
+• [bug yang diperbaiki]
+
+Catatan teknis:
+• [perubahan teknis signifikan]
+
+— Tim ALTOMEDIA
+
+================================================================================

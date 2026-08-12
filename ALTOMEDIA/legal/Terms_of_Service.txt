@@ -1,0 +1,304 @@
+================================================================================
+                SYARAT & KETENTUAN LAYANAN (TERMS OF SERVICE) — WARKIT
+================================================================================
+Aplikasi: WARKIT — Idle Warung Indonesia
+Nama Paket (Package Name): com.altomedia.warkit
+Pengembang (Developer): ALTOMEDIA
+Kontak: altomediaindonesia@gmail.com
+Tanggal Berlaku: 12 Agustus 2026
+================================================================================
+
+1. PERNYATAAN PENERIMAAN KETENTUAN
+
+Selamat datang di WARKIT — Idle Warung Indonesia ("Aplikasi", "Layanan", atau
+"Game"). Syarat & Ketentuan ini ("Ketentuan") mengatur penggunaan Aplikasi yang
+disediakan oleh ALTOMEDIA ("kami", "pengembang", "penyedia").
+
+Dengan mengunduh, memasang, mengakses, atau menggunakan Aplikasi, Anda ("Pengguna"
+atau "Anda") dianggap telah membaca, memahami, dan menyetujui untuk terikat
+oleh Ketentuan ini serta Kebijakan Privasi yang terpisah. Jika Anda tidak
+menyetujui Ketentuan ini, mohon untuk tidak menggunakan Aplikasi dan hapus
+Aplikasi dari perangkat Anda.
+
+Penggunaan Aplikasi oleh anak di bawah usia 13 tahun harus didampingi oleh
+orang tua atau wali yang telah menyetujui Ketentuan ini.
+
+--------------------------------------------------------------------------------
+
+2. DEFINISI
+
+    a. "Aplikasi" merujuk pada perangkat lunak game WARKIT — Idle Warung
+       Indonesia, termasuk seluruh versi dan pembaruan.
+    b. "Konten" merujuk pada seluruh elemen dalam game (grafik, teks, audio,
+       desain level, karakter, item, mekanisme permainan).
+    c. "Mata Uang Virtual" merujuk pada uang dalam game yang tidak memiliki
+       nilai riil dan tidak dapat ditukar dengan uang sungguhan.
+    d. "Pembelian Dalam Aplikasi" (jika ada di versi mendatang) merujuk pada
+       transaksi nyata untuk memperoleh item/virtual currency.
+    e. "Akun" merujuk pada profil pengguna (jika fitur login diaktifkan).
+    f. "Perangkat" merujuk pada perangkat Android tempat Aplikasi dijalankan.
+
+--------------------------------------------------------------------------------
+
+3. LISENSI PENGGUNAAN
+
+3.1 Lisensi Terbatas
+    Kami memberikan Anda lisensi pribadi, non-eksklusif, tidak dapat
+    dialihkan, dan dapat dicabut untuk mengunduh dan menggunakan Aplikasi
+    pada perangkat Android yang memenuhi persyaratan teknis (minSdk 21 /
+    Android 5.0 ke atas).
+
+3.2 Batasan Lisensi
+    Anda TIDAK diperbolehkan:
+    a. Menyalin, memodifikasi, mendistribusikan, atau membuat karya turunan
+       dari Aplikasi atau Konten tanpa izin tertulis.
+    b. Melakukan reverse engineering, dekompilasi, atau disasembly Aplikasi
+       kecuali diizinkan oleh hukum yang berlaku.
+    c. Menyewakan, menjual, atau mengalihkan Aplikasi kepada pihak ketiga.
+    d. Menghapus atau mengubah pemberitahuan hak cipta atau merek dagang.
+    e. Mengakses Aplikasi melalui otomasi (bot, script) untuk memanipulasi
+       permainan atau mendapatkan keuntungan tidak sah.
+    f. Menggunakan Aplikasi untuk tujuan ilegal atau yang melanggar hak pihak lain.
+
+--------------------------------------------------------------------------------
+
+4. KONTEEN DAN HAK INTELEKTUAL
+
+4.1 Kepemilikan
+    Seluruh Konten Aplikasi (kode sumber, grafik, desain, karakter, nama
+    warung, tata letak, mekanisme permainan, musik/suara, nama "WARKIT" dan
+    "Idle Warung Indonesia") adalah milik ALTOMEDIA atau pemberi lisensinya
+    dan dilindungi oleh hukum hak cipta Indonesia (UU No. 28 Tahun 2014) dan
+    peraturan terkait.
+
+4.2 Konten Pengguna
+    Jika Aplikasi memungkinkan pembuatan konten oleh pengguna (mis. nama
+    warung, karakter), Anda memberikan kami lisensi non-eksklusif gratis
+    untuk menampilkan, memproses, dan menggunakan konten tersebut dalam
+    Aplikasi. Anda bertanggung jawab memastikan konten tidak melanggar
+    hukum atau hak pihak ketiga.
+
+4.3 Merek Dagang
+    "WARKIT", "Idle Warung Indonesia", dan "ALTOMEDIA" adalah merek dagang
+    atau nama dagang milik ALTOMEDIA. Penggunaan tanpa izin dilarang.
+
+--------------------------------------------------------------------------------
+
+5. PERMAINAN DAN MATA UANG VIRTUAL
+
+5.1 Sifat Permainan
+    WARKIT adalah game idle/simulation single-player offline. Tujuan utama
+    adalah hiburan dan simulasi pengelolaan warung. Seluruh nilai ekonomi
+    dalam game (uang virtual, harga produk, pendapatan) bersifat fiktif dan
+    tidak memiliki nilai tukar nyata.
+
+5.2 Mata Uang Virtual
+    Mata uang virtual yang diperoleh atau dibeli (jika ada) hanya dapat
+    digunakan di dalam Aplikasi. Mata uang virtual:
+    a. Tidak memiliki nilai moneter riil.
+    b. Tidak dapat ditukar dengan uang tunai atau barang.
+    c. Tidak dapat dipindahtangankan antar pengguna.
+    d. Dapat direset atau dihapus sesuai kebijakan kami.
+
+5.3 Pembelian Dalam Aplikasi (Jika Ada)
+    Jika versi mendatang menyediakan pembelian dalam aplikasi:
+    a. Transaksi dilakukan melalui Google Play Billing.
+    b. Pembayaran nyata dikenakan biaya sesuai harga di Play Store.
+    c. Pembelian tidak dapat dikembalikan kecuali diwajibkan hukum.
+    d. Kami dapat menolak atau membatalkan transaksi mencurigakan.
+    Untuk pengembalian dana, hubungi Google Play Support.
+
+5.4 Progres Permainan
+    Progres disimpan secara lokal di perangkat. Kami tidak bertanggung jawab
+    atas kehilangan progres akibat:
+    a. Penghapusan Aplikasi.
+    b. Reset pabrik perangkat.
+    c. Kerusakan perangkat atau kegagalan penyimpanan.
+    d. Pembaruan sistem yang mengubah akses penyimpanan.
+
+--------------------------------------------------------------------------------
+
+6. PERILAKU PENGGUNA
+
+Anda setuju untuk TIDAK melakukan:
+    a. Kecurangan, hacking, atau exploitasi bug untuk keuntungan tidak sah.
+    b. Penggunaan alat pihak ketiga (mod, cheat, bot) yang memanipulasi game.
+    c. Perilaku yang mengganggu pengguna lain (jika fitur sosial ditambahkan).
+    d. Penyebaran malware atau kode berbahaya melalui Aplikasi.
+    e. Upaya mengakses sistem atau server tanpa otorisasi.
+    f. Melanggar kebijakan konten Google Play.
+Pelanggaran dapat berakibat penangguhan/pemblokiran akses Aplikasi serta
+tindakan hukum sesuai peraturan yang berlaku.
+
+--------------------------------------------------------------------------------
+
+7. PEMBARUAN DAN PEMELIHARAAN
+
+7.1 Pembaruan
+    Kami dapat merilis pembaruan Aplikasi dari waktu ke waktu untuk menambah
+    fitur, memperbaiki bug, atau meningkatkan keamanan. Pembaruan mungkin
+    mengubah fitur, mekanisme, atau keseimbangan permainan.
+
+7.2 Penghentian
+    Kami dapat menghentikan atau menghentikan dukungan untuk versi lama
+    Aplikasi. Kami juga berhak, dengan kebijakan kami sendiri, untuk
+    menghentikan Aplikasi secara keseluruhan dengan pemberitahuan yang wajar.
+
+7.3 Kompatibilitas
+    Aplikasi memerlukan Android 5.0 (API 21) ke atas. Pembaruan sistem atau
+    perubahan perangkat dapat memengaruhi kompatibilitas.
+
+--------------------------------------------------------------------------------
+
+8. IKLAN (JIKA ADA)
+
+Jika Aplikasi menampilkan iklan pada versi mendatang:
+    a. Iklan disediakan oleh mitra iklan (mis. Google AdMob).
+    b. Klik pada iklan bersifat sukarela dan tidak memengaruhi progres inti.
+    c. Kami tidak bertanggung jawab atas konten iklan pihak ketiga.
+    d. Personalisasi iklan dapat dinonaktifkan di pengaturan perangkat.
+
+--------------------------------------------------------------------------------
+
+9. PENOLAKAN JAMINAN
+
+Aplikasi disediakan "SEBAGAIMANA ADANYA" dan "SEKEDERANYA TERSEDIA", tanpa
+jaminan apa pun, baik tersurat maupun tersirat. Kami tidak menjamin bahwa:
+    a. Aplikasi akan berjalan tanpa gangguan atau bebas error sepenuhnya.
+    b. Hasil yang diperoleh dari penggunaan Aplikasi akan akurat/andal.
+    c. Aplikasi kompatibel dengan semua perangkat.
+    d. Bug atau kerentanan dapat segera diperbaiki.
+
+Anda menggunakan Aplikasi atas risiko Anda sendiri.
+
+--------------------------------------------------------------------------------
+
+10. BATASAN TANGGUNG JAWAB
+
+Sejauh diizinkan oleh hukum, ALTOMEDIA tidak bertanggung jawab atas:
+    a. Kerugian tidak langsung, insidental, atau konsekuensial.
+    b. Kehilangan data, kehilangan progres, atau kerusakan perangkat.
+    c. Kerugian akibat keterlambatan, kegagalan, atau gangguan Layanan.
+    d. Kerugian akibat konten atau tindakan pihak ketiga.
+    e. Kerugian akibat pembelian dalam aplikasi yang gagal atau ditolak.
+
+Total tanggung jawab kami atas klaim apa pun terbatas pada jumlah yang telah
+Anda bayarkan kepada kami untuk menggunakan Aplikasi (jika ada pembelian), atau
+Rp 500.000 (lima ratus ribu rupiah), mana yang lebih rendah.
+
+--------------------------------------------------------------------------------
+
+11. TANGGUNG JAWAB PENGGUNA
+
+Anda bertanggung jawab atas:
+    a. Keamanan perangkat Anda dan akses ke Aplikasi.
+    b. Seluruh aktivitas yang terjadi melalui perangkat Anda.
+    c. Kepatuhan terhadap Ketentuan ini dan hukum yang berlaku.
+    d. Biaya data seluler/Wi-Fi yang timbul dari penggunaan Aplikasi.
+
+--------------------------------------------------------------------------------
+
+12. HUKUM YANG BERLAKU
+
+Ketentuan ini diatur dan ditafsirkan berdasarkan hukum Republik Indonesia,
+tanpa memperhatikan aturan konflik hukum. Setiap sengketa yang timbul akan
+diupayakan diselesaikan secara musyawarah. Jika tidak tercapai, sengketa akan
+diajukan ke Pengadilan Negeri Karawang, Jawa Barat, Indonesia.
+
+--------------------------------------------------------------------------------
+
+13. PENYELESAIAN SENGKETA
+
+13.1 Penyelesaian Secara Kekeluargaan
+    Setiap sengketa akan diupayakan diselesaikan terlebih dahulu melalui
+    musyawarah dan negosiasi antara para pihak dalam jangka waktu 30 hari.
+
+13.2 Mediasi/Arbitrase
+    Jika musyawarah gagal, sengketa dapat diselesaikan melalui mediasi atau
+    arbitrase sesuai peraturan Badan Arbitrase Nasional Indonesia (BANI).
+
+13.3 Biaya
+    Biaya penyelesaian sengketa ditanggung sesuai hasil putusan, kecuali
+    ditentukan lain oleh para pihak.
+
+--------------------------------------------------------------------------------
+
+14. KETENTUAN KHUSUS GOOGLE PLAY
+
+Aplikasi WARKIT didistribusikan melalui Google Play Store. Dengan demikian,
+penggunaan Aplikasi juga tunduk pada:
+    a. Ketentuan Layanan Google Play.
+    b. Kebijakan Privasi Google.
+    c. Kebijakan Konten Google Play.
+Jika terjadi konflik antara Ketentuan ini dan ketentuan Google, ketentuan
+Google akan berlaku untuk hal-hal yang berkaitan dengan platform Play Store.
+
+--------------------------------------------------------------------------------
+
+15. FITUR SOSIAL DAN BERBAGI (JIKA ADA)
+
+Jika Aplikasi menyediakan fitur berbagi pencapaian/screenshot:
+    a. Anda bertanggung jawab atas konten yang Anda bagikan.
+    b. Jangan bagikan informasi pribadi atau sensitif.
+    c. Kami tidak bertanggung jawab atas penyalahgunaan konten yang dibagikan.
+    d. Konten yang melanggar dapat kami hapus tanpa pemberitahuan.
+
+--------------------------------------------------------------------------------
+
+16. PENGGUNAAN LAYANAN PIHAK KETIGA
+
+Aplikasi dapat menggunakan layanan pihak ketiga (Google Play Services,
+analitik, iklan). Penggunaan layanan tersebut tunduk pada Ketentuan dan
+Kebijakan Privasi masing-masing penyedia. Kami tidak bertanggung jawab atas
+praktik layanan pihak ketiga.
+
+--------------------------------------------------------------------------------
+
+17. PERUBAHAN KETENTUAN
+
+Kami dapat mengubah Ketentuan ini sewaktu-waktu. Perubahan akan efektif
+segera setelah dipublikasikan. Penggunaan Aplikasi secara berkelanjutan
+setelah perubahan dianggap sebagai persetujuan Anda terhadap Ketentuan yang
+diperbarui. Kami mendorong Anda meninjau halaman ini secara berkala.
+
+--------------------------------------------------------------------------------
+
+18. PENAFIAN TANGGUNG JAWAB KONTEN GAME
+
+WARKIT adalah game fiktif. Seluruh nama, karakter, warung, provinsi, produk,
+harga, dan skenario yang digunakan dalam game bersifat simulasi dan tidak
+merepresentasikan entitas nyata. Setiap kemiripan dengan tokoh, produk, atau
+instansi nyata bersifat kebetulan.
+
+Game ini bertema warung Indonesia dengan tujuan hiburan dan edukasi
+pengelolaan usaha sederhana. Konten tidak dimaksudkan sebagai saran finansial,
+investasi, atau bisnis nyata.
+
+--------------------------------------------------------------------------------
+
+19. KONTAK
+
+Untuk pertanyaan, laporan, atau saran terkait Ketentuan ini atau Aplikasi:
+
+    Pengembang: ALTOMEDIA
+    Email: altomediaindonesia@gmail.com
+    Kota: Karawang, Jawa Barat, Indonesia
+    Kode Negara: ID
+
+--------------------------------------------------------------------------------
+
+20. KETENTUAN PENUTUP
+
+Ketentuan ini merupakan keseluruhan perjanjian antara Anda dan ALTOMEDIA
+mengenai penggunaan Aplikasi WARKIT. Jika salah satu ketentuan dinyatakan
+tidak berlaku oleh pengadilan, ketentuan lainnya tetap berlaku penuh.
+
+Kegagalan kami untuk menegakkan suatu hak atau ketentuan tidak dianggap
+sebagai pelepasan hak tersebut.
+
+Dengan menggunakan Aplikasi, Anda mengakui telah membaca dan menyetujui
+seluruh isi Ketentuan ini.
+
+================================================================================
+                       AKHIR SYARAT & KETENTUAN LAYANAN
+================================================================================

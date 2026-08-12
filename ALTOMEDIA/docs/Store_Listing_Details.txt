@@ -1,0 +1,128 @@
+================================================================================
+                STORE LISTING DETAILS — WARKIT (SIAP COPY-PASTE)
+================================================================================
+Package: com.altomedia.warkit
+Developer: ALTOMEDIA
+================================================================================
+
+APP NAME (max 30 char):
+    WARKIT
+
+--------------------------------------------------------------------------------
+
+SHORT DESCRIPTION (max 80 char) — Bahasa Indonesia:
+    Game idle kelola warung jadi jaringan terbesar se-Indonesia.
+
+SHORT DESCRIPTION (max 80 char) — English:
+    Idle warung tycoon: build Indonesia's biggest warung empire!
+
+--------------------------------------------------------------------------------
+
+FULL DESCRIPTION (max 4000 char) — Bahasa Indonesia:
+
+WARKIT — Idle Warung Indonesia
+Bangun warung kecil menjadi jaringan terbesar di Indonesia!
+
+Selamat datang di WARKIT, game simulasi idle bertema warung Indonesia. Mulai dari
+sebuah warung kayu sederhana, layani pelanggan, kelola stok, kembangkan bisnis,
+dan raih gelar Raja Warung Indonesia!
+
+FITUR UTAMA:
+• 50+ produk warung: sembako, makanan, minuman, sayur, buah, produk khas daerah
+• Kelola rak & gudang: restock tepat waktu agar rak tidak kosong
+• Rekrut & latih pegawai: kasir, stoker, pembersih, manajer (BAB 11/37)
+• Supplier & produk segar: jaga kesegaran sayur/buah agar tidak busuk
+• Sistem cuaca & waktu: siang/malam & hujan/cerah memengaruhi pelanggan
+• VIP & reputasi: layani pelanggan VIP untuk bonus reputasi (BAB 15/17)
+• Dekorasi: hias warung untuk menaikkan kenyamanan & daya tarik
+• Promosi: diskon, beli 2 gratis 1, paket hemat, cashback
+• Sistem cabang: buka cabang di kota & kelola keuntungan otomatis
+• Manajer cabang: rekrut Pak Hendra untuk efisiensi cabang
+• Kendaraan distribusi: motor, pickup, truk engkel, truk box, trailer
+• Event musiman: Ramadhan, Lebaran, Festival Belanja
+• Investor: buktikan warung stabil 30 hari untuk deal bonus modal
+• Toko Grosir: buka grosir untuk pendapatan besar harian
+• Sistem pajak: bayar pajak usaha, listrik, air, gaji, perawatan
+• Bangunan & fasilitas: upgrade warung Kayu → Semi → Modern → Minimarket
+• Ekspansi provinsi: buka 10 provinsi (Jabar, Jateng, Jatim, Sumut, dll)
+• Produk khas daerah: Keripik Singkong, Getuk, Kerupuk Udang, Kopi Toraja, dll
+• Program member: Silver, Gold, Platinum (pelanggan setia & transaksi naik)
+• Pembayaran digital: Tunai, Debit, QRIS, Dompet Digital
+• Pusat distribusi nasional: kelola stok seluruh cabang otomatis
+• Krisis pasokan: ambil keputusan cepat saat gangguan distribusi
+• Penghargaan nasional: raih cutscene & bonus reputasi nasional
+• Persaingan nasional: hadapi kompetitor ritel besar
+• Raja Warung: raih gelar tertinggi + skin emas & patung maskot
+• Endless Empire: mode tanpa batas dengan 13 achievement & prestise
+
+CARA BERMAIN:
+• Layani pelanggan yang datang ke warung.
+• Restock rak dari gudang agar produk selalu tersedia.
+• Kumpulkan uang & naik level untuk buka fitur baru.
+• Buka cabang, provinsi, dan kembangkan jaringan nasional.
+• Raih semua achievement di mode Endless Empire!
+
+Gratis & offline — mainkan kapan saja, di mana saja.
+Bangun kerajaan warungmu sekarang di WARKIT — Idle Warung Indonesia!
+
+--------------------------------------------------------------------------------
+
+FULL DESCRIPTION (max 4000 char) — English:
+
+WARKIT — Idle Warung Indonesia
+Grow a tiny wooden warung into Indonesia's biggest warung empire!
+
+Welcome to WARKIT, an idle simulation game with an Indonesian warung (small
+shop) theme. Start from a simple wooden stall, serve customers, manage stock,
+grow your business, and earn the title "Raja Warung Indonesia"!
+
+KEY FEATURES:
+• 50+ warung products: groceries, food, drinks, veggies, regional specialties
+• Shelf & warehouse: restock on time so shelves never run empty
+• Hire & train staff: cashier, stocker, cleaner, manager
+• Suppliers & fresh goods: keep veggies/fruits fresh to avoid spoilage
+• Weather & time: day/night & rain/clear affect customer flow
+• VIP & reputation: serve VIP customers for reputation bonus
+• Decorations: decorate your warung to boost comfort & appeal
+• Promotions: discounts, buy-2-get-1, bundles, cashback
+• Branch system: open branches in cities, manage auto-profit
+• Branch managers: hire Pak Hendra to boost branch efficiency
+• Distribution vehicles: motorcycle, pickup, box truck, trailer
+• Seasonal events: Ramadhan, Lebaran, Shopping Festival
+• Investor: prove stable warung for 30 days for capital bonus
+• Wholesale store: open a wholesale shop for big daily income
+• Tax system: pay business, electricity, water, wage, maintenance tax
+• Buildings & facilities: upgrade Wooden → Semi → Modern → Minimarket
+• Province expansion: open 10 provinces (West Java, Central Java, etc.)
+• Regional products: Cassava Chips, Getuk, Prawn Crackers, Toraja Coffee
+• Membership: Silver, Gold, Platinum (loyal customers & bigger bills)
+• Digital payments: Cash, Debit, QRIS, Digital Wallet
+• National distribution center: manage stock across all branches
+• Supply crisis: make quick decisions during distribution disruptions
+• National award: earn cutscene & national reputation bonus
+• National competition: face big retail competitors
+• Raja Warung: earn the highest title + gold skin & mascot statue
+• Endless Empire: endless mode with 13 achievements & prestige
+
+HOW TO PLAY:
+• Serve customers coming to your warung.
+• Restock shelves from warehouse to keep products available.
+• Collect money & level up to unlock new features.
+• Open branches & provinces to grow a national network.
+• Earn all achievements in Endless Empire mode!
+
+Free & offline — play anytime, anywhere.
+Build your warung empire now in WARKIT — Idle Warung Indonesia!
+
+--------------------------------------------------------------------------------
+
+KATEGORI: Games > Simulation
+TAGS: Simulation, Idle, Tycoon, Management, Offline, Strategy, Casual
+CONTACT EMAIL: altomediaindonesia@gmail.com
+WEBSITE (Privacy Policy): https://<host-privacy-policy>/  (ganti URL hosting)
+COPYRIGHT HOLDER: ALTOMEDIA
+PHYSICAL ADDRESS: Karawang, Jawa Barat, Indonesia (lengkapnya diisi di console)
+
+================================================================================
+                  AKHIR STORE LISTING DETAILS
+================================================================================

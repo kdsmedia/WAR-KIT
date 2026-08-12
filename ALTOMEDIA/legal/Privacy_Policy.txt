@@ -1,0 +1,289 @@
+================================================================================
+                    KEBIJAKAN PRIVASI (PRIVACY POLICY) — WARKIT
+================================================================================
+Aplikasi: WARKIT — Idle Warung Indonesia
+Nama Paket (Package Name): com.altomedia.warkit
+Pengembang (Developer): ALTOMEDIA
+Kontak: altomediaindonesia@gmail.com
+Tanggal Berlaku: 12 Agustus 2026
+================================================================================
+
+1. PENDAHULUAN
+
+ALTOMEDIA ("kami", "pengembang", atau "penyedia aplikasi") menghormati privasi
+pengguna ("Anda") aplikasi seluler WARKIT — Idle Warung Indonesia ("Aplikasi").
+Kebijakan Privasi ini menjelaskan secara terperinci bagaimana Aplikasi
+mengumpulkan, menggunakan, menyimpan, melindungi, dan memproses data serta
+informasi ketika Anda mengunduh, mengakses, dan menggunakan Aplikasi.
+
+Dengan mengunduh, memasang, atau menggunakan Aplikasi, Anda dianggap telah
+membaca, memahami, dan menyetujui isi Kebijakan Privasi ini. Jika Anda tidak
+setuju dengan ketentuan di sini, mohon untuk tidak menggunakan Aplikasi dan
+hapus Aplikasi dari perangkat Anda.
+
+WARKIT adalah game simulasi idle 2D bertema warung Indonesia. Pemain memulai
+dari sebuah warung kecil dan mengembangkannya menjadi jaringan warung terbesar
+di Indonesia melalui mekanisme pengelolaan stok, perekrutan pegawai, ekspansi
+cabang, dan ekspansi antar provinsi.
+
+--------------------------------------------------------------------------------
+
+2. INFORMASI YANG KAMI KUMPULKAN
+
+Aplikasi WARKIT merupakan game offline (single-player) yang sebagian besar data
+permainan disimpan secara lokal di perangkat Anda. Berikut rincian jenis
+informasi yang mungkin dikumpulkan:
+
+2.1 Informasi yang Anda berikan secara sukarela
+    - Nama toko/karakter yang Anda buat di dalam game.
+    - Preferensi pengaturan permainan (misalnya, pilihan bahasa, tema).
+    - Umpan balik, saran, atau laporan masalah yang Anda kirimkan melalui
+      email ke altomediaindonesia@gmail.com.
+
+2.2 Informasi yang dikumpulkan secara otomatis
+    - Data teknis perangkat: model perangkat, versi sistem operasi Android
+      (API level), resolusi layar, bahasa perangkat, dan zona waktu.
+    - Data penggunaan: durasi bermain, level yang dicapai, jumlah cabang,
+      pencapaian (achievement) yang diraih, dan statistik permainan lainnya.
+    - Data performa: crash report dan log kesalahan teknis (jika Aplikasi
+      mengalami kegagalan), untuk membantu kami memperbaiki stabilitas.
+    - Pengidentifikasi perangkat: ID iklan (jika tersedia), ID unik sesi.
+
+2.3 Informasi yang TIDAK kami kumpulkan
+    - Aplikasi TIDAK meminta atau menyimpan informasi pribadi sensitif seperti
+      NIK, alamat rumah, nomor rekening bank, atau kartu kredit.
+    - Aplikasi TIDAK mengakses kontak, galeri foto, kamera, mikrofon, GPS,
+      atau SMS perangkat Anda untuk tujuan pengumpulan data.
+    - Aplikasi TIDAK melakukan transaksi finansial nyata; seluruh mata uang
+      dalam game bersifat virtual dan tidak memiliki nilai riil.
+
+--------------------------------------------------------------------------------
+
+3. CARA KAMI MENGUMPULKAN INFORMASI
+
+3.1 Penyimpanan Lokal
+    Seluruh progres permainan (jumlah uang virtual, level, cabang, pegawai,
+    dekorasi, provinsi, pencapaian) disimpan di perangkat Anda menggunakan
+    SharedPreferences Android. Data ini tidak dikirim ke server kami kecuali
+    Anda secara eksplisit memilih untuk berbagi (misalnya melalui fitur
+    screenshot/bagikan jika tersedia).
+
+3.2 Layanan Pihak Ketiga
+    Aplikasi dapat mengintegrasikan layanan pihak ketiga (jika diaktifkan di
+    versi mendatang), seperti:
+    - Google Play Services (untuk pembaruan & layanan inti Android).
+    - Firebase Crashlytics (untuk crash reporting, jika diintegrasikan).
+    - Layanan iklan (Google AdMob) yang dapat mengumpulkan ID iklan perangkat.
+    Setiap layanan pihak ketiga tunduk pada kebijakan privasi masing-masing:
+    - Google: https://policies.google.com/privacy
+    - Firebase: https://firebase.google.com/support/privacy
+    - AdMob: https://support.google.com/admob/answer/6128533
+
+3.3 Izin Aplikasi
+    Aplikasi WARKIT hanya memerlukan izin minimal. Aplikasi tidak meminta izin
+    berisiko tinggi (kamera, lokasi, mikrofon, kontak). Jika di masa depan
+    Aplikasi memerlukan izin tambahan, kami akan memperbarui Kebijakan ini dan
+    meminta persetujuan Anda secara eksplisit saat penggunaan.
+
+--------------------------------------------------------------------------------
+
+4. BAGAIMANA KAMI MENGGUNAKAN INFORMASI
+
+Informasi yang dikumpulkan digunakan untuk:
+    a. Menyediakan, mengoperasikan, dan memelihara fungsi inti Aplikasi
+       (menyimpan progres permainan, memuat level, memproses transaksi virtual).
+    b. Meningkatkan pengalaman pengguna (personalisasi UI, menyesuaikan
+       kesulitan, menampilkan konten yang relevan).
+    c. Menganalisis penggunaan untuk pengembangan fitur baru (level baru,
+       provinsi baru, event musiman, mode permainan baru).
+    d. Mendiagnosis masalah teknis, memperbaiki bug, dan meningkatkan
+       stabilitas serta performa Aplikasi.
+    e. Mencegah penyalahgunaan, kecurangan, atau aktivitas yang melanggar
+       ketentuan penggunaan.
+    f. Mengirimkan pemberitahuan penting mengenai pembaruan, keamanan, atau
+       perubahan layanan (jika fitur notifikasi diaktifkan).
+    g. Menyediakan dukungan pelanggan atas laporan yang Anda kirimkan.
+    h. Memenuhi kewajiban hukum dan peraturan yang berlaku.
+
+Kami TIDAK akan menjual, menyewakan, atau memperdagangkan informasi pribadi
+Anda kepada pihak ketiga untuk tujuan pemasaran tanpa persetujuan Anda.
+
+--------------------------------------------------------------------------------
+
+5. DASAR HUKUM PEMROSESAN DATA
+
+Pemrosesan data Anda didasarkan pada:
+    a. Persetujuan (consent) — Anda menyetujui Kebijakan ini saat menggunakan
+       Aplikasi.
+    b. Kepentingan sah (legitimate interest) — untuk memastikan Aplikasi
+       berjalan stabil, aman, dan berkembang.
+    c. Kepentingan vital — untuk melindungi integritas sistem dan pengguna
+       dari potensi ancaman keamanan.
+    d. Kepatuhan hukum — jika diwajibkan oleh peraturan yang berlaku di
+       Indonesia, termasuk Undang-Undang Nomor 27 Tahun 2022 tentang
+       Pelindungan Data Pribadi (UU PDP) dan Peraturan Menteri Kominfo
+       terkait.
+
+--------------------------------------------------------------------------------
+
+6. PENYIMPANAN DAN RETENSI DATA
+
+6.1 Penyimpanan Lokal
+    Data permainan disimpan di perangkat Anda. Jika Anda menghapus Aplikasi,
+    seluruh data permainan lokal akan ikut terhapus dan tidak dapat dipulihkan
+    kecuali Anda telah melakukan pencadangan eksternal.
+
+6.2 Penyimpanan Server (jika berlaku)
+    Data teknis dan penggunaan yang dikumpulkan melalui layanan pihak ketiga
+    disimpan di server pihak ketiga tersebut sesuai kebijakan retensi mereka.
+    Umumnya data disimpan selama diperlukan untuk tujuan pengumpulan, lalu
+    dianonimkan atau dihapus.
+
+6.3 Transfer Data Lintas Batas
+    Karena layanan pihak ketiga dapat berlokasi di luar Indonesia, data Anda
+    mungkin diproses di negara lain yang memiliki standar perlindungan data
+    berbeda. Dengan menggunakan Aplikasi, Anda menyetujui transfer tersebut.
+
+--------------------------------------------------------------------------------
+
+7. BERBAGI INFORMASI DENGAN PIHAK KETIGA
+
+Kami dapat membagikan informasi (non-sensitif) kepada:
+    a. Penyedia layanan tepercaya yang membantu operasi Aplikasi (hosting,
+       analitik, iklan, dukungan pelanggan).
+    b. Otoritas hukum jika diwajibkan oleh hukum, perintah pengadilan, atau
+       permintaan resmi dari penegak hukum.
+    c. Pihak yang terlibat dalam restrukturisasi korporat (merger, akuisisi)
+       dengan jaminan kerahasiaan yang setara.
+
+Kami tidak membagikan informasi pribadi sensitif kepada pihak ketiga untuk
+tujuan komersial tanpa persetujuan eksplisit Anda.
+
+--------------------------------------------------------------------------------
+
+8. KEAMANAN DATA
+
+Kami menerapkan langkah teknis dan organisasi yang wajar untuk melindungi data
+Anda:
+    a. Penyimpanan lokal menggunakan mekanisme bawaan Android.
+    b. Komunikasi dengan layanan pihak ketiga (jika ada) menggunakan HTTPS/TLS.
+    c. Akses internal terbatas pada personel yang berwenang.
+    d. Peninjauan rutin terhadap praktik keamanan.
+
+Meskipun demikian, tidak ada metode transmisi atau penyimpanan yang 100% aman.
+Kami tidak dapat menjamin keamanan absolut, namun berkomitmen untuk terus
+memperbaiki perlindungan data sesuai standar industri.
+
+--------------------------------------------------------------------------------
+
+9. HAK-HAK ANDA SEBAGAI PENGGUNA
+
+Sesuai UU PDP Indonesia dan peraturan terkait, Anda memiliki hak:
+    a. Hak akses — meminta salinan data pribadi yang kami simpan.
+    b. Hak perbaikan — meminta koreksi data yang tidak akurat.
+    c. Hak penghapusan — meminta penghapusan data pribadi Anda.
+    d. Hak pembatasan pemrosesan — meminta pembatasan penggunaan data.
+    e. Hak penarikan persetujuan — menarik persetujuan kapan saja.
+    f. Hak portabilitas — meminta data dalam format terstruktur.
+    g. Hak keberatan — menolak pemrosesan tertentu.
+    h. Hak mengajukan keluhan — kepada otoritas perlindungan data.
+
+Untuk menggunakan hak-hak ini, hubungi kami di altomediaindonesia@gmail.com.
+Kami akan merespons dalam waktu yang wajar (umumnya 14-30 hari kerja).
+
+--------------------------------------------------------------------------------
+
+10. PRIVASI ANAK
+
+Aplikasi WARKIT ditujukan untuk pengguna berusia 13 tahun ke atas. Aplikasi
+TIDAK ditujukan untuk anak di bawah 13 tahun dan kami tidak dengan sengaja
+mengumpulkan data pribadi anak-anak. Jika Anda adalah orang tua/wali dan
+mengetahui anak Anda telah memberikan informasi kepada kami tanpa persetujuan,
+mohon hubungi kami agar kami dapat menghapus informasi tersebut.
+
+Aplikasi tidak memerlukan registrasi akun dan tidak meminta tanggal lahir,
+sehingga risiko pengumpulan data anak diminimalkan.
+
+--------------------------------------------------------------------------------
+
+11. Tautan ke Situs Pihak Ketiga
+
+Aplikasi mungkin mengandung tautan ke situs atau layanan pihak ketiga (misalnya
+tautan ke kebijakan privasi layanan iklan). Kami tidak bertanggung jawab atas
+kebijakan privasi situs pihak ketiga. Mohon tinjau kebijakan privasi setiap
+situs yang Anda kunjungi.
+
+--------------------------------------------------------------------------------
+
+12. COOKIE DAN TEKNOLOGI PELACAKAN
+
+Aplikasi WARKIT (sebagai aplikasi native) tidak menggunakan cookie peramban.
+Namun, layanan pihak ketiga (seperti iklan atau analitik) dapat menggunakan
+teknologi serupa (ID iklan, identifier sesi) untuk mengumpulkan data. Anda
+dapat mengatur ulang ID iklan atau menonaktifkan personalisasi iklan melalui
+pengaturan Google di perangkat Anda.
+
+--------------------------------------------------------------------------------
+
+13. IKLAN (JIKA ADA)
+
+Jika Aplikasi menampilkan iklan (pada versi mendatang), iklan tersebut
+disediakan oleh mitra iklan (mis. Google AdMob) yang dapat mengumpulkan ID
+iklan perangkat untuk personalisasi. Anda dapat menonaktifkan personalisasi
+iklan melalui pengaturan perangkat (Settings > Google > Ads).
+
+Aplikasi tidak menampilkan iklan yang menargetkan anak di bawah 13 tahun dan
+tidak menampilkan konten iklan yang melanggar kebijakan Google Play.
+
+--------------------------------------------------------------------------------
+
+14. PERUBAHAN KEBIJAKAN PRIVASI
+
+Kami dapat memperbarui Kebijakan Privasi ini dari waktu ke waktu untuk
+mencerminkan perubahan dalam praktik kami atau peraturan yang berlaku. Setiap
+perubahan akan dipublikasikan dengan menampilkan tanggal "Tanggal Berlaku"
+yang baru. Kami mendorong Anda meninjau Kebijakan ini secara berkala.
+
+Perubahan signifikan akan diberitahukan melalui notifikasi dalam Aplikasi atau
+pembaruan di halaman Play Store.
+
+--------------------------------------------------------------------------------
+
+15. PEMBERITAHUAN UNTUK PENGGUNA WILAYAH EKONOMI EROPA (EEE)
+
+Jika Anda berdomisili di Wilayah Ekonomi Eropa, Anda memiliki hak tambahan
+sesuai GDPR:
+    - Hak atas penghapusan ("right to be forgotten").
+    - Hak untuk tidak menjadi sasaran pengambilan keputusan otomatis.
+    - Hak mengajukan keluhan kepada otoritas perlindungan data lokal Anda.
+
+Dasar hukum pemrosesan: persetujuan, kepentingan sah, dan kepatuhan hukum.
+
+--------------------------------------------------------------------------------
+
+16. KONTAK
+
+Jika Anda memiliki pertanyaan, keluhan, atau permintaan terkait Kebijakan
+Privasi ini atau pemrosesan data Anda, mohon hubungi:
+
+    Pengembang: ALTOMEDIA
+    Email: altomediaindonesia@gmail.com
+    Kota: Karawang, Jawa Barat, Indonesia
+    Kode Negara: ID
+
+Kami berkomitmen merespons setiap pertanyaan dalam waktu yang wajar.
+
+--------------------------------------------------------------------------------
+
+17. PERNYATAAN PENUTUP
+
+Dengan menggunakan Aplikasi WARKIT, Anda mengakui bahwa Anda telah membaca dan
+memahami Kebijakan Privasi ini dan menyetujui praktik pengumpulan,
+penggunaan, dan perlindungan data sebagaimana diuraikan di sini.
+
+Kebijakan ini disusun sesuai standar yang diminta oleh Google Play Console
+dan peraturan perlindungan data pribadi yang berlaku di Indonesia.
+
+================================================================================
+                              AKHIR KEBIJAKAN PRIVASI
+================================================================================

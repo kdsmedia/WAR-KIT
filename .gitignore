@@ -15,7 +15,8 @@ bin/
 gen/
 out/
 build/
-release/
+/release/
+!/ALTOMEDIA/release/
 
 # Gradle files
 .gradle/
@@ -36,3 +37,7 @@ local.properties
 # Log / OS files
 *.log
 .DS_Store
+
+# Exception: paket rilis di folder ALTOMEDIA/ tetap di-commit
+!ALTOMEDIA/release/*.apk
+!ALTOMEDIA/release/*.aab
