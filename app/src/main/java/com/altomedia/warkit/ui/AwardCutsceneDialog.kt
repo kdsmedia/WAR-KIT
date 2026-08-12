@@ -24,6 +24,7 @@ class AwardCutsceneDialog(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        UiTheme.applyPopup(this)
         setContentView(buildView())
         window?.setLayout(
             ViewGroup.LayoutParams.MATCH_PARENT,

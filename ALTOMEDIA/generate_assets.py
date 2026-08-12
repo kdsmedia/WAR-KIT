@@ -222,10 +222,22 @@ def gen_screenshot(num, title, desc, accent):
     # Kasir tengah
     d.rectangle([fx+fw//2-60, fy+200, fx+fw//2+60, fy+330], fill=WOOD, outline=WOOD_DARK, width=3)
     d.rectangle([fx+fw//2-40, fy+220, fx+fw//2+40, fy+260], fill=GOLD)
-    # Pelanggan
-    draw_customer(d, fx+fw//2-100, fy+380, GREEN, 36)
-    draw_customer(d, fx+fw//2+40, fy+390, (171, 71, 188), 32)
-    draw_customer(d, fx+fw//2+120, fy+400, (255, 183, 77), 34)
+    # Pelanggan — komposit karakter atlas kartun 2D (animasi)
+    char_dir = os.path.join(os.path.dirname(__file__), "..", "app", "src", "main", "assets", "characters")
+    char_dir = os.path.abspath(char_dir)
+    char_names = ["ibu", "anak", "ojol"]
+    positions = [(fx+fw//2-120, fy+360), (fx+fw//2+10, fy+370), (fx+fw//2+130, fy+365)]
+    for (cn, (px, py)) in zip(char_names, positions):
+        atlas_path = os.path.join(char_dir, f"{cn}.png")
+        if os.path.exists(atlas_path):
+            atlas = Image.open(atlas_path).convert("RGBA")
+            fw_ = 96
+            frame = atlas.crop((0, 0, fw_, 128))
+            scale = 1.6
+            frame = frame.resize((int(fw_ * scale), int(128 * scale)), Image.LANCZOS)
+            img.paste(frame, (px, py), frame)
+        else:
+            draw_customer(d, px, py+40, GREEN, 36)
     # Tombol aksi bawah
     btns = [("🏪", GREEN), ("📦", ROOF), ("👤", BLUE), ("🎯", GOLD), ("🇮🇩", (0, 139, 139))]
     bw = fw // 5

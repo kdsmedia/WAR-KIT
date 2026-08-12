@@ -1,0 +1,66 @@
+================================================================================
+                 CATATAN RILIS (RELEASE NOTES) — WARKIT v1.2
+================================================================================
+Aplikasi: WARKIT — Idle Warung Indonesia
+Package: com.altomedia.warkit
+Versi: 1.2 (versionCode 3)
+Tanggal: 12 Agustus 2026
+Developer: ALTOMEDIA
+================================================================================
+
+PEMBAHARUAN v1.2 — KARTUN 2D SEMPURNA & KARAKTER ANIMASI:
+
+🧍 KARAKTER ANIMASI ATLAS (DI-RENDER):
+• Karakter pelanggan & kasir kini di-render dari sprite-sheet atlas 2D kartun
+  (bukan lagi gambar primitif) — setiap karakter punya kepala, rambut/topi,
+  badan, DUA TANGAN & DUA KAKI yang bergerak
+• 6 frame walk-cycle + 2 frame idle per karakter → gerakan berjalan NATURAL
+  seperti manusia (kaki & tangan berayun, badan sedikit bob)
+• Fase animasi adaptif: jalan (walk) saat ENTERING/QUEUING/LEAVING,
+  idle (napas) saat PICKING/PAYING
+• 6 tipe karakter kartun berbeda: Ibu Rumah Tangga (kerudung), Anak Sekolah
+  (ransel), Ojol (helm), Petani (caping), Karyawan (dasi), Kasir (nametag)
+• Kasir/seller ikut animasi di belakang meja kasir
+• Aura emas untuk pelanggan VIP
+
+🎨 IKON MENU KARTUN 2D (TRANSPARAN):
+• 14 ikon menu dibuat ulang sebagai ilustrasi kartun 2D flat (tanpa background):
+  Gudang, Upgrade, Pegawai, Dekorasi, Produk, Misi, Cabang, Operasional,
+  Bisnis, Event, Provinsi, Modern, Prestasi, Buka — semua digambar vektor
+  dengan palet warna hangat konsisten
+• Tombol aksi kini menampilkan ikon kartun bitmap (bukan emoji)
+
+🪟 POPUP / DIALOG MODERN:
+• Semua 20 dialog memakai popup modern: kartu rounded dengan border + bayangan
+  lembut, dim 50%, gravity center, animasi dialog
+• Tombol global bergaya modern (gradient hangat, rounded, teks putih bold)
+• Helper UiTheme: judul/sub-judul/info/kartu modern untuk konsistensi visual
+
+🖼️ SCENE 2D KARTUN MODERN (dari v1.1, disempurnakan):
+• Langit gradien hangat + awan flat, dinding aksen, lantai kayu perspektif,
+  pintu kaca, meja kasir + etalase + mesin kasir
+• Rak produk rounded-rect modern dengan label & bar stok
+
+🎵 MUSIK LATAR (dari v1.1):
+• BGM loop 20 detik pentatonic hangat, pause/resume otomatis
+
+🔧 TEKNIS:
+• AssetLoader: load & cache bitmap atlas dari assets (karakter + ikon)
+• SpriteAnimator: hitung frame atlas berdasarkan fase & waktu
+• Preload aset di background thread
+• versionCode 3, versionName 1.2
+• AAB + APK release signed (V2 signer, ALTOMEDIA.jks)
+• Build SUCCESSFUL (debug + release + bundle)
+• Tidak ada bug/error compile, tidak ada dummy/simulasi/placeholder
+
+✅ KOMPATIBEL:
+• Android 5.0 (API 21) ke atas • Portrait mode • Offline + musik latar
+
+Nikmati warung kartun 2D yang kini benar-benar hidup dengan karakter animasi
+yang berjalan natural!
+
+— Tim ALTOMEDIA
+
+================================================================================
+                  AKHIR CATATAN RILIS v1.2
+================================================================================

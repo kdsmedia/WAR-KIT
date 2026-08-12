@@ -30,8 +30,15 @@ class CircleButton(
         color = Color.WHITE; textSize = 11f; textAlign = Paint.Align.CENTER
     }
     private var pressed = false
+    private var iconBmp: android.graphics.Bitmap? = null
 
     var label: String = ""
+
+    /** Nama aset ikon kartun (tanpa ekstensi) di assets/icons/. */
+    fun setIconAsset(name: String) {
+        iconBmp = com.altomedia.warkit.game.AssetLoader.icon(context, name)
+        invalidate()
+    }
 
     private fun darken(c: Int, f: Float): Int {
         val r = (Color.red(c) * f).toInt().coerceIn(0, 255)
@@ -56,8 +63,18 @@ class CircleButton(
         canvas.drawRoundRect(RectF(pad + 4f, pad + 4f, w - pad - 4f, pad + (h - pad) * 0.45f), 12f, 12f, hl)
         // Ikon
         val cx = w / 2f
-        val cy = (rect.top + rect.bottom) / 2f
-        canvas.drawText(icon, cx, cy + 9f, textPaint)
+        val cy = (rect.top + rect.bottom) / 2f - 2f
+        val bmp = iconBmp
+        if (bmp != null) {
+            val iconSize = minOf(rect.width(), rect.height()) * 0.62f
+            val left = cx - iconSize / 2f
+            val top = cy - iconSize / 2f
+            canvas.drawBitmap(bmp, null,
+                RectF(left, top, left + iconSize, top + iconSize),
+                Paint(Paint.FILTER_BITMAP_FLAG))
+        } else {
+            canvas.drawText(icon, cx, cy + 9f, textPaint)
+        }
         // Label
         if (label.isNotEmpty()) {
             canvas.drawText(label, cx, h - 4f, labelPaint)

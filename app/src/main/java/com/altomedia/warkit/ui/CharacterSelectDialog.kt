@@ -26,6 +26,7 @@ class CharacterSelectDialog(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        UiTheme.applyPopup(this)
         setContentView(buildView())
         setCancelable(false)
         window?.setLayout(
@@ -40,7 +41,7 @@ class CharacterSelectDialog(
         val root = LinearLayout(ctx).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(32, 32, 32, 32)
-            setBackgroundColor(Color.parseColor("#FDF6E3"))
+            setBackgroundColor(Color.TRANSPARENT)
         }
         val title = TextView(ctx).apply {
             text = "PILIH KARAKTER PENJUAL"

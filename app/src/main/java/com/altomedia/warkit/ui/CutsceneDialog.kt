@@ -31,6 +31,7 @@ class CutsceneDialog(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        UiTheme.applyPopup(this)
         setContentView(buildView())
         setCancelable(false)
         window?.setLayout(
@@ -45,7 +46,7 @@ class CutsceneDialog(
         val root = LinearLayout(ctx).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(32, 32, 32, 32)
-            setBackgroundColor(Color.parseColor("#FDF6E3"))
+            setBackgroundColor(Color.TRANSPARENT)
         }
         root.addView(TextView(ctx).apply {
             text = "🌟 BAB 20 — WARUNGMU MENJADI PUSAT BELANJA DESA"

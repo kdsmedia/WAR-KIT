@@ -24,6 +24,7 @@ class UpgradeDialog(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        UiTheme.applyPopup(this)
         setContentView(buildView())
         window?.setLayout(
             ViewGroup.LayoutParams.MATCH_PARENT,
@@ -37,7 +38,7 @@ class UpgradeDialog(
         val root = LinearLayout(ctx).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(32, 32, 32, 32)
-            setBackgroundColor(Color.parseColor("#FDF6E3"))
+            setBackgroundColor(Color.TRANSPARENT)
         }
         root.addView(TextView(ctx).apply {
             text = "⬆️ UPGRADE WARUNG"; textSize = 20f

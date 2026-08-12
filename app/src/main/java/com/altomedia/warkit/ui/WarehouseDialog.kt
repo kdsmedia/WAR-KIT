@@ -26,6 +26,7 @@ class WarehouseDialog(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        UiTheme.applyPopup(this)
         setContentView(buildView())
         window?.setLayout(
             ViewGroup.LayoutParams.MATCH_PARENT,
@@ -39,7 +40,7 @@ class WarehouseDialog(
         val root = LinearLayout(ctx).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(32, 32, 32, 32)
-            setBackgroundColor(Color.parseColor("#FDF6E3"))
+            setBackgroundColor(Color.TRANSPARENT)
         }
         root.addView(title("🏪 GUDANG & SUPPLIER"))
         root.addView(info("Kapasitas Gudang: ${state.warehouse.values.sum()}/${state.warehouseCapacity} (Lv.${state.warehouseLevel})"))
@@ -142,15 +143,7 @@ class WarehouseDialog(
 
     private fun refresh() { setContentView(buildView()) }
 
-    private fun title(t: String) = TextView(context).apply {
-        text = t; textSize = 20f; setTextColor(Color.parseColor("#B8523A"))
-        gravity = Gravity.CENTER; setPadding(0, 8, 0, 16)
-    }
-    private fun subTitle(t: String) = TextView(context).apply {
-        text = t; textSize = 15f; setTextColor(Color.parseColor("#E76F51"))
-        setPadding(0, 16, 0, 8)
-    }
-    private fun info(t: String) = TextView(context).apply {
-        text = t; textSize = 13f; setTextColor(Color.parseColor("#5D4037")); setPadding(0, 4, 0, 4)
-    }
+    private fun title(t: String) = com.altomedia.warkit.ui.UiTheme.title(context, t)
+    private fun subTitle(t: String) = com.altomedia.warkit.ui.UiTheme.subTitle(context, t)
+    private fun info(t: String) = com.altomedia.warkit.ui.UiTheme.info(context, t)
 }

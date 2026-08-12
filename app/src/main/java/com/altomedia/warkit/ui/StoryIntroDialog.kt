@@ -30,6 +30,7 @@ class StoryIntroDialog(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        UiTheme.applyPopup(this)
         setContentView(buildView())
         setCancelable(false)
         window?.setLayout(
@@ -44,7 +45,7 @@ class StoryIntroDialog(
         val root = LinearLayout(ctx).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(32, 32, 32, 32)
-            setBackgroundColor(Color.parseColor("#FDF6E3"))
+            setBackgroundColor(Color.TRANSPARENT)
         }
         val title = TextView(ctx).apply {
             text = if (idx == 0) "🌅 BAB 1 — AWAL SEBUAH WARUNG"

@@ -15,6 +15,7 @@ import com.altomedia.warkit.R
 import com.altomedia.warkit.audio.MusicManager
 import com.altomedia.warkit.core.GameState
 import com.altomedia.warkit.core.SaveManager
+import com.altomedia.warkit.game.AssetLoader
 import com.altomedia.warkit.game.CircleButton
 import com.altomedia.warkit.game.GameEngine
 import com.altomedia.warkit.game.GameView
@@ -42,6 +43,9 @@ class MainActivity : AppCompatActivity() {
         engine = GameEngine(state)
         gameView.state = state
         gameView.engine = engine
+
+        // Preload aset karakter & ikon kartun 2D (agar siap saat render)
+        Thread { AssetLoader.preload(this) }.start()
 
         music = MusicManager(this)
 
@@ -100,19 +104,19 @@ class MainActivity : AppCompatActivity() {
             orientation = LinearLayout.HORIZONTAL
         }
         val btnSize = 132
-        btnBar.addView(actionBtn("🏪", "Gudang", 0xFFE76F51.toInt()) { openWarehouse() }, btnSize)
-        btnBar.addView(actionBtn("⬆️", "Upgrade", 0xFF6D4C41.toInt()) { openUpgrade() }, btnSize)
-        btnBar.addView(actionBtn("🧑‍💼", "Pegawai", 0xFF1E88E5.toInt()) { openEmployees() }, btnSize)
-        btnBar.addView(actionBtn("🎨", "Dekorasi", 0xFF8E24AA.toInt()) { openDecorations() }, btnSize)
-        btnBar.addView(actionBtn("🛒", "Produk", 0xFFF4A261.toInt()) { openProducts() }, btnSize)
-        btnBar.addView(actionBtn("🎯", "Misi", 0xFF43A047.toInt()) { openMissions() }, btnSize)
-        btnBar.addView(actionBtn("🗺️", "Cabang", 0xFF00897B.toInt()) { openBranches() }, btnSize)
-        btnBar.addView(actionBtn("⚙️", "Operasional", 0xFF5C6BC0.toInt()) { openOperations() }, btnSize)
-        btnBar.addView(actionBtn("💼", "Bisnis", 0xFF8D6E63.toInt()) { openBusiness() }, btnSize)
-        btnBar.addView(actionBtn("📅", "Event", 0xFFE53935.toInt()) { openEvents() }, btnSize)
-        btnBar.addView(actionBtn("🇮🇩", "Provinsi", 0xFF00ACC1.toInt()) { openProvinces() }, btnSize)
-        btnBar.addView(actionBtn("💳", "Modern", 0xFFAB47BC.toInt()) { openModern() }, btnSize)
-        btnBar.addView(actionBtn("🏆", "Prestasi", 0xFFFFA000.toInt()) { openAchievements() }, btnSize)
+        btnBar.addView(actionBtn("🏪", "Gudang", 0xFFE76F51.toInt(), "warehouse") { openWarehouse() }, btnSize)
+        btnBar.addView(actionBtn("⬆️", "Upgrade", 0xFF6D4C41.toInt(), "upgrade") { openUpgrade() }, btnSize)
+        btnBar.addView(actionBtn("🧑‍💼", "Pegawai", 0xFF1E88E5.toInt(), "employees") { openEmployees() }, btnSize)
+        btnBar.addView(actionBtn("🎨", "Dekorasi", 0xFF8E24AA.toInt(), "decoration") { openDecorations() }, btnSize)
+        btnBar.addView(actionBtn("🛒", "Produk", 0xFFF4A261.toInt(), "products") { openProducts() }, btnSize)
+        btnBar.addView(actionBtn("🎯", "Misi", 0xFF43A047.toInt(), "missions") { openMissions() }, btnSize)
+        btnBar.addView(actionBtn("🗺️", "Cabang", 0xFF00897B.toInt(), "branches") { openBranches() }, btnSize)
+        btnBar.addView(actionBtn("⚙️", "Operasional", 0xFF5C6BC0.toInt(), "operations") { openOperations() }, btnSize)
+        btnBar.addView(actionBtn("💼", "Bisnis", 0xFF8D6E63.toInt(), "business") { openBusiness() }, btnSize)
+        btnBar.addView(actionBtn("📅", "Event", 0xFFE53935.toInt(), "events") { openEvents() }, btnSize)
+        btnBar.addView(actionBtn("🇮🇩", "Provinsi", 0xFF00ACC1.toInt(), "provinces") { openProvinces() }, btnSize)
+        btnBar.addView(actionBtn("💳", "Modern", 0xFFAB47BC.toInt(), "modern") { openModern() }, btnSize)
+        btnBar.addView(actionBtn("🏆", "Prestasi", 0xFFFFA000.toInt(), "achievements") { openAchievements() }, btnSize)
         scroll.addView(btnBar)
         val scrollLp = FrameLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT, barHeight
@@ -120,7 +124,7 @@ class MainActivity : AppCompatActivity() {
         root.addView(scroll, scrollLp)
 
         // Tombol Buka/Tutup Warung (kanan-atas, di bawah HUD) - BAB 2
-        val openBtn = actionBtn("🟢", "Buka", 0xFF43A047.toInt()) {
+        val openBtn = actionBtn("🟢", "Buka", 0xFF43A047.toInt(), "open") {
             if (state.shopOpen) { state.closeShop() } else { state.openShop(); gameView.resetTimer() }
             refreshOpenBtnLabel()
         }.apply { id = View.generateViewId() }
@@ -134,16 +138,17 @@ class MainActivity : AppCompatActivity() {
 
     private var openBtnRef: View? = null
     private fun actionBtn(
-        icon: String, label: String, color: Int, onClick: () -> Unit
+        icon: String, label: String, color: Int, iconAsset: String, onClick: () -> Unit
     ): CircleButton {
         val b = CircleButton(this, icon, color) { onClick() }
         b.label = label
+        b.setIconAsset(iconAsset)
         if (label == "Buka") openBtnRef = b
         return b
     }
 
-    private fun actionBtn(icon: String, label: String, color: Int, onClick: () -> Unit, size: Int): CircleButton {
-        val b = actionBtn(icon, label, color, onClick)
+    private fun actionBtn(icon: String, label: String, color: Int, iconAsset: String, onClick: () -> Unit, size: Int): CircleButton {
+        val b = actionBtn(icon, label, color, iconAsset, onClick)
         val lp = LinearLayout.LayoutParams(size, size).apply {
             gravity = Gravity.CENTER; rightMargin = 10; leftMargin = 10
         }

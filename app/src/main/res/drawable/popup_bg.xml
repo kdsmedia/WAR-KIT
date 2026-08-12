@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Latar popup modern: kartu rounded dengan border tipis & sedikit elevasi visual -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Bayangan halus -->
+    <item android:left="4dp" android:top="6dp" android:right="4dp" android:bottom="4dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#1A000000" />
+            <corners android:radius="22dp" />
+        </shape>
+    </item>
+    <!-- Kartu utama -->
+    <item android:left="2dp" android:top="3dp" android:right="2dp" android:bottom="2dp">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/warkit_bg" />
+            <stroke android:width="2dp" android:color="@color/warkit_primary" />
+            <corners android:radius="20dp" />
+        </shape>
+    </item>
+</layer-list>

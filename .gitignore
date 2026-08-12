@@ -33,6 +33,9 @@ local.properties
 # Keystore files
 *.jks
 *.keystore
+# Exception: keystore resmi ALTOMEDIA dimasukkan ke repo sesuai instruksi
+!ALTOMEDIA.jks
+!ALTOMEDIA/ALTOMEDIA.jks
 
 # Log / OS files
 *.log
