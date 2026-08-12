@@ -266,6 +266,19 @@ class GameView @JvmOverloads constructor(
         canvas.drawText("📈 Rp${formatMoney(s.sessionIncome)}", w - 260f, 36f, textBold)
         // Pelanggan dilayani + pegawai
         canvas.drawText("👥 ${s.totalCustomersServed} | 🧑‍💼 ${s.employees.size}", w - 260f, 64f, textBold)
+        // Event & promosi aktif (BAB 26, 29, 30)
+        if (s.seasonalEvent != com.altomedia.warkit.model.SeasonalEvent.NONE) {
+            textSmall.color = Color.parseColor("#E53935"); textSmall.textSize = 12f
+            canvas.drawText("${s.seasonalEvent.emoji} ${s.seasonalEvent.displayName} (${s.eventDaysLeft}h)",
+                w - 260f, 80f, textSmall)
+            textSmall.color = Color.parseColor("#5D4037"); textSmall.textSize = 18f
+        }
+        if (s.promotion != com.altomedia.warkit.model.Promotion.TIDAK_ADA) {
+            textSmall.color = Color.parseColor("#1565C0"); textSmall.textSize = 12f
+            canvas.drawText("${s.promotion.emoji} ${s.promotion.displayName} (${s.promotionDaysLeft}h)",
+                w - 260f, if (s.seasonalEvent != com.altomedia.warkit.model.SeasonalEvent.NONE) 94f else 80f, textSmall)
+            textSmall.color = Color.parseColor("#5D4037"); textSmall.textSize = 18f
+        }
         // Status warung
         val status = if (s.shopOpen) "WARUNG BUKA" else "WARUNG TUTUP"
         textBold.color = if (s.shopOpen) Color.parseColor("#A5D6A7") else Color.parseColor("#EF9A9A")

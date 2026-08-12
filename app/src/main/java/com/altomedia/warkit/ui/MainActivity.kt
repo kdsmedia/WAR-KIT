@@ -95,6 +95,9 @@ class MainActivity : AppCompatActivity() {
         btnBar.addView(actionBtn("🎨", "Dekorasi", 0xFF8E24AA.toInt()) { openDecorations() })
         btnBar.addView(actionBtn("🛒", "Produk", 0xFFF4A261.toInt()) { openProducts() })
         btnBar.addView(actionBtn("🎯", "Misi", 0xFF43A047.toInt()) { openMissions() })
+        btnBar.addView(actionBtn("🗺️", "Cabang", 0xFF00897B.toInt()) { openBranches() })
+        btnBar.addView(actionBtn("⚙️", "Operasional", 0xFF5C6BC0.toInt()) { openOperations() })
+        btnBar.addView(actionBtn("📅", "Event", 0xFFE53935.toInt()) { openEvents() })
         val btnLp = FrameLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             btnSize + 24
@@ -178,6 +181,15 @@ class MainActivity : AppCompatActivity() {
     }
     private fun openDecorations() {
         DecorationDialog(this, state) { save.save(state) }.show()
+    }
+    private fun openBranches() {
+        BranchDialog(this, state) { save.save(state) }.show()
+    }
+    private fun openOperations() {
+        OperationsDialog(this, state) { save.save(state) }.show()
+    }
+    private fun openEvents() {
+        EventDialog(this, state) { save.save(state) }.show()
     }
 
     /** Trigger cutscene BAB 20 saat reputasi mencapai tier tertentu (sekali). */

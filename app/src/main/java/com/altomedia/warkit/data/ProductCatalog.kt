@@ -40,6 +40,20 @@ object ProductCatalog {
         Product("biskuit",   "Biskuit",      "🥠",   6_000,  8_500, 10, 1.0f),
         Product("permen",    "Permen",       "🍭",   2_000,  3_000, 10, 1.1f),
         Product("saus",      "Saus",         "🍅",   5_000,  7_500, 11, 0.6f),
+
+        // === BAB 24: Produk segar (masa simpan terbatas) ===
+        Product("sayur",  "Sayur",   "🥬",  3_000,  5_000, 7,  0.9f, shelfLifeSeconds = 90f,  isFresh = true),
+        Product("buah",   "Buah",    "🍎",  5_000,  8_000, 7,  0.9f, shelfLifeSeconds = 120f, isFresh = true),
+        Product("cabai",  "Cabai",   "🌶️",  4_000,  7_000, 8,  0.8f, shelfLifeSeconds = 80f,  isFresh = true),
+        Product("bawang", "Bawang",  "🧅",  3_500,  5_500, 8,  0.8f, shelfLifeSeconds = 100f, isFresh = true),
+        Product("tomat",  "Tomat",   "🍅",  3_000,  5_000, 8,  0.8f, shelfLifeSeconds = 80f,  isFresh = true),
+        Product("kentang","Kentang", "🥔",  4_000,  6_500, 9,  0.7f, shelfLifeSeconds = 140f, isFresh = true),
+
+        // === BAB 29/30: Produk event Ramadhan & Lebaran ===
+        Product("sirup",      "Sirup",       "🥤",   8_000, 12_000, 5,  0.7f),
+        Product("kurma",      "Kurma",       "🌴",  15_000, 22_000, 5,  0.8f),
+        Product("tepung",     "Tepung",      "🌾",  10_000, 14_000, 6,  0.6f),
+        Product("kue_lebaran","Kue Lebaran", "🍪",  20_000, 30_000, 6,  0.9f, shelfLifeSeconds = 200f, isFresh = true),
     )
 
     fun byId(id: String): Product = all.first { it.id == id }

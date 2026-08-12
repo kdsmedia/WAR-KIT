@@ -2,17 +2,24 @@ package com.altomedia.warkit.core
 
 import com.altomedia.warkit.data.MissionBank
 import com.altomedia.warkit.data.ProductCatalog
+import com.altomedia.warkit.data.SecurityBank
 import com.altomedia.warkit.data.ShelfConfig
 import com.altomedia.warkit.data.type
+import com.altomedia.warkit.model.Branch
+import com.altomedia.warkit.model.CashRegister
+import com.altomedia.warkit.model.CompetitionState
 import com.altomedia.warkit.model.Customer
 import com.altomedia.warkit.model.Employee
 import com.altomedia.warkit.model.Mission
 import com.altomedia.warkit.model.MissionType
+import com.altomedia.warkit.model.Promotion
 import com.altomedia.warkit.model.ReputationTier
+import com.altomedia.warkit.model.SeasonalEvent
 import com.altomedia.warkit.model.SellerCharacter
 import com.altomedia.warkit.model.ShelfItem
 import com.altomedia.warkit.model.Supplier
 import com.altomedia.warkit.model.TimeOfDay
+import com.altomedia.warkit.model.Vehicle
 import com.altomedia.warkit.model.Weather
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -119,21 +126,119 @@ class GameState {
     // === BAB 16: VIP tracking ===
     var totalVipServed: Int = 0
 
+    // === BAB 21: Cabang ===
+    val branches: MutableList<Branch> = mutableListOf()
+    fun openBranch(b: Branch): Boolean {
+        if (branches.any { it.id == b.id }) return false
+        if (level < b.unlockLevel) return false
+        if (money < b.openCost) return false
+        money -= b.openCost
+        branches.add(b.copy())
+        return true
+    }
+    fun branchIncomePerSecond(): Long =
+        branches.sumOf { (it.totalIncome / (day.coerceAtLeast(1))).coerceAtLeast(0L) }
+
+    // === BAB 22: Manajer cabang (Pak Hendra) ===
+    fun upgradeBranchManager(b: Branch): Boolean {
+        val cost = 500_000 * (b.managerLevel + 1)
+        if (money < cost || b.managerLevel >= 10) return false
+        money -= cost
+        b.managerLevel++
+        return true
+    }
+
+    // === BAB 23: Kendaraan pengiriman ===
+    var vehicleLevel: Int = 0  // ordinal Vehicle
+    fun vehicle(): Vehicle = Vehicle.at(vehicleLevel)
+    fun upgradeVehicle(): Boolean {
+        val next = Vehicle.entries.getOrNull(vehicleLevel + 1) ?: return false
+        if (level < next.unlockLevel || money < next.unlockCost) return false
+        money -= next.unlockCost
+        vehicleLevel++
+        return true
+    }
+
+    // === BAB 25: Mesin kasir ===
+    var cashRegisterLevel: Int = 1
+    fun cashRegister(): CashRegister = CashRegister.at(cashRegisterLevel)
+    fun upgradeCashRegister(): Boolean {
+        val next = CashRegister.entries.getOrNull(cashRegisterLevel) ?: return false
+        if (level < next.unlockLevel || money < next.upgradeCost) return false
+        money -= next.upgradeCost
+        cashRegisterLevel++
+        return true
+    }
+
+    // === BAB 26: Promosi ===
+    var promotion: Promotion = Promotion.TIDAK_ADA
+    var promotionDaysLeft: Int = 0
+    fun startPromotion(p: Promotion): Boolean {
+        if (p == Promotion.TIDAK_ADA) { promotion = p; promotionDaysLeft = 0; return true }
+        if (money < p.cost) return false
+        money -= p.cost
+        promotion = p
+        promotionDaysLeft = p.durationDays
+        return true
+    }
+
+    // === BAB 27: Persaingan bisnis ===
+    var competition: CompetitionState = CompetitionState()
+    fun playerShopScore(): Float {
+        // Gabungan: reputasi, kebersihan(pegawai cleaner), kelengkapan produk, dekorasi, harga(supplier)
+        val rep = (reputationTier().ordinal + 1) / 6f
+        val cleaner = if (employees.any { it.role == Employee.Role.CLEANER }) 0.2f else 0f
+        val products = (ProductCatalog.unlocked(level).size / 30f).coerceAtMost(1f)
+        val decor = (decorations.size / 6f).coerceAtMost(1f)
+        val supplierScore = (supplier.ordinal / 3f)
+        return ((rep + cleaner + products + decor + supplierScore) / 5f).coerceIn(0f, 1f)
+    }
+
+    // === BAB 28: Keamanan ===
+    val security: MutableList<String> = mutableListOf()
+    fun buySecurity(id: String): Boolean {
+        if (security.contains(id)) return false
+        val s = SecurityBank.byId(id)
+        if (level < s.unlockLevel || money < s.cost) return false
+        money -= s.cost
+        security.add(id)
+        reputation += s.reputationBoost
+        return true
+    }
+    fun theftReduction(): Float = security.fold(0f) { acc, id ->
+        acc + SecurityBank.byId(id).theftReduction
+    }
+
+    // === BAB 29/30: Event musiman ===
+    var seasonalEvent: SeasonalEvent = SeasonalEvent.NONE
+    var eventDaysLeft: Int = 0
+    fun startEvent(ev: SeasonalEvent, durationDays: Int = 5) {
+        seasonalEvent = ev
+        eventDaysLeft = durationDays
+    }
+    fun endEvent() { seasonalEvent = SeasonalEvent.NONE; eventDaysLeft = 0 }
+
     /** Tier reputasi saat ini (BAB 17). */
     fun reputationTier(): ReputationTier = ReputationTier.at(
         reputation + decorationReputation()
     )
 
-    /** Peluang VIP total: karakter + tier reputasi + dekorasi (BAB 16 & 17). */
+    /** Peluang VIP total: karakter + tier reputasi + dekorasi + event (BAB 16,17,29,30). */
     fun vipChance(): Float {
         val base = (seller?.vipChance() ?: 0.03f)
         val tier = reputationTier().vipChanceBonus
-        return base + tier + decorationVipBoost()
+        return base + tier + decorationVipBoost() + seasonalEvent.vipChanceBonus
     }
 
-    /** Multiplier jumlah pelanggan: tier reputasi * cuaca (BAB 17 & 19). */
-    fun customerSpawnMult(): Float =
-        reputationTier().customerMult * weather.customerMult()
+    /** Multiplier jumlah pelanggan: tier reputasi * cuaca * event * promosi * kompetisi (BAB 17,19,26,27,29,30). */
+    fun customerSpawnMult(): Float {
+        val tier = reputationTier().customerMult
+        val weather = weather.customerMult()
+        val event = seasonalEvent.customerMult
+        val promo = promotion.customerMult
+        val competition = competition.retentionRate()
+        return tier * weather * event * promo * competition
+    }
 
     /** Biaya operasional harian pegawai (dikurangi efisiensi). */
     fun dailyWage(): Int {
@@ -174,21 +279,27 @@ class GameState {
      * Menyelesaikan transaksi pelanggan. Menghasilkan uang + EXP + reputasi,
      * dan menambah progress misi. Pegawai (BAB 11) menambah kecepatan & reputasi.
      * VIP (BAB 16) memberi bonus diamond & reputasi ekstra.
+     * Promosi (BAB 26) menaikkan nilai belanja tapi mengurangi margin.
+     * Mesin kasir (BAB 25) & event (BAB 29/30) memengaruhi pendapatan.
      */
     fun completePurchase(c: Customer) {
         val s = seller
         val profitMult = s?.profitMultiplier() ?: 1f
         // Efisiensi pegawai mengurangi biaya -> menambah margin (BAB 11)
         val effBonus = 1f + (employeeEfficiency() / 100f)
-        val totalBill = c.bill
-        val baseProfit = (totalBill * profitMult * effBonus).toInt()
+        // BAB 26: promosi menaikkan nilai belanja & mengurangi margin
+        val billMult = promotion.billMult * seasonalEvent.billMult
+        val profitPenalty = promotion.profitPenalty
+        val totalBill = (c.bill * billMult).toInt()
+        val baseProfit = (totalBill * profitMult * effBonus * (1f - profitPenalty)).toInt()
         val satisfactionBonus = c.satisfactionBonus()
         var earned = baseProfit + satisfactionBonus * 500
 
         money += earned
         sessionIncome += earned
         lastIncome = earned
-        val repGain = (s?.reputationBonus() ?: 1) + employeeFriendliness() + satisfactionBonus
+        val repGain = (s?.reputationBonus() ?: 1) + employeeFriendliness() +
+            satisfactionBonus + promotion.reputationBoost
         reputation += repGain
         addExp(10 + (s?.expBonus() ?: 0))
 
@@ -396,7 +507,7 @@ class GameState {
         return ((base + customerBonus) * empMult * tierMult)
     }
 
-    /** Maju ke hari berikutnya: gaji pegawai, reset cuaca, cek misi harian. */
+    /** Maju ke hari berikutnya: gaji pegawai, reset cuaca, cek misi harian, BAB 26/29/30. */
     fun advanceDay() {
         day++
         val wage = dailyWage()
@@ -406,7 +517,56 @@ class GameState {
         if (day % nextWeatherChange == 0) {
             weather = Weather.entries.random()
         }
+        // BAB 26: promosi berkurang harian
+        if (promotionDaysLeft > 0) {
+            promotionDaysLeft--
+            if (promotionDaysLeft == 0) promotion = Promotion.TIDAK_ADA
+        }
+        // BAB 29/30: event musiman berkurang harian
+        if (eventDaysLeft > 0) {
+            eventDaysLeft--
+            if (eventDaysLeft == 0) endEvent()
+        }
+        // BAB 21: kirim keuntungan cabang ke saldo utama
+        val branchEarn = branchIncomePerSecond() * 120  // ~1 hari gameplay
+        if (branchEarn > 0) {
+            money += branchEarn
+            sessionIncome += branchEarn
+        }
+        // BAB 27: kompetitor muncul di level tertentu
+        if (level >= 12 && !competition.competitorActive) {
+            competition.competitorActive = true
+            competition.competitorStrength = 0.3f
+        }
+        competition.playerShopScore = playerShopScore()
         checkDailyReset()
+    }
+
+    /** BAB 24: update masa simpan produk segar di rak; tandai busuk. */
+    fun tickFreshness(dt: Float) {
+        for (shelf in shelves) {
+            for (item in shelf) {
+                if (item.stock <= 0) { item.freshnessTimer = 0f; item.spoiled = false; continue }
+                val product = ProductCatalog.byId(item.productId)
+                if (product.isFresh && !item.spoiled) {
+                    if (item.freshnessTimer <= 0f) item.freshnessTimer = product.shelfLifeSeconds
+                    item.freshnessTimer -= dt
+                    if (item.freshnessTimer <= 0f) {
+                        item.spoiled = true
+                        item.stock = 0  // produk busuk dibuang
+                    }
+                }
+            }
+        }
+    }
+
+    /** BAB 24: buang produk busuk (reset flag, ruang bebas). */
+    fun discardSpoiled() {
+        for (shelf in shelves) {
+            for (item in shelf) {
+                if (item.spoiled) { item.spoiled = false; item.freshnessTimer = 0f }
+            }
+        }
     }
 
     /** Update waktu siang/malam (BAB 18). Dipanggil tiap detik dari engine. */

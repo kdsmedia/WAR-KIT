@@ -38,6 +38,8 @@ class GameEngine(val state: GameState) {
 
         // BAB 18: maju periode waktu
         state.tickTimeOfDay(dt)
+        // BAB 24: update masa simpan produk segar
+        state.tickFreshness(dt)
 
         // Spawn pelanggan
         spawnTimer += dt
@@ -109,8 +111,8 @@ class GameEngine(val state: GameState) {
             }
             Customer.Phase.PAYING -> {
                 c.waited += dt
-                // BAB 11: pegawai kasir mempercepat pembayaran
-                val payDuration = 0.8f / state.workSpeedMult()
+                // BAB 11/25: pegawai kasir + mesin kasir mempercepat pembayaran
+                val payDuration = 0.8f / (state.workSpeedMult() * state.cashRegister().scanSpeed)
                 if (c.waited >= payDuration) {
                     state.completePurchase(c)
                     c.phase = Customer.Phase.LEAVING

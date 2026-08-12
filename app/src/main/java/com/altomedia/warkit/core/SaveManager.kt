@@ -3,9 +3,13 @@ package com.altomedia.warkit.core
 import android.content.Context
 import android.content.SharedPreferences
 import com.altomedia.warkit.data.EmployeeBank
+import com.altomedia.warkit.model.CashRegister
+import com.altomedia.warkit.model.Promotion
+import com.altomedia.warkit.model.SeasonalEvent
 import com.altomedia.warkit.model.SellerCharacter
 import com.altomedia.warkit.model.Supplier
 import com.altomedia.warkit.model.TimeOfDay
+import com.altomedia.warkit.model.Vehicle
 import com.altomedia.warkit.model.Weather
 import org.json.JSONArray
 import org.json.JSONObject
@@ -72,6 +76,26 @@ class SaveManager(context: Context) {
             put("timeOfDay", state.timeOfDay.name)
             put("weather", state.weather.name)
             put("totalVipServed", state.totalVipServed)
+
+            // BAB 21-30
+            put("branches", JSONArray().also { arr ->
+                state.branches.forEach { b ->
+                    arr.put(JSONObject().apply {
+                        put("id", b.id); put("balance", b.balance)
+                        put("reputation", b.reputation); put("managerLevel", b.managerLevel)
+                        put("totalIncome", b.totalIncome)
+                    })
+                }
+            })
+            put("vehicleLevel", state.vehicleLevel)
+            put("cashRegisterLevel", state.cashRegisterLevel)
+            put("promotion", state.promotion.name)
+            put("promotionDaysLeft", state.promotionDaysLeft)
+            put("competitorActive", state.competition.competitorActive)
+            put("competitorStrength", state.competition.competitorStrength)
+            put("security", JSONArray().also { arr -> state.security.forEach { arr.put(it) } })
+            put("seasonalEvent", state.seasonalEvent.name)
+            put("eventDaysLeft", state.eventDaysLeft)
         }
         prefs.edit().putString("state", json.toString()).putLong("savedAt", now).apply()
         state.lastSavedAt = now
@@ -152,6 +176,37 @@ class SaveManager(context: Context) {
                 Weather.valueOf(json.optString("weather", "CERAH"))
             }.getOrDefault(Weather.CERAH)
             state.totalVipServed = json.optInt("totalVipServed", 0)
+
+            // BAB 21-30
+            state.branches.clear()
+            json.optJSONArray("branches")?.let { arr ->
+                for (i in 0 until arr.length()) {
+                    val o = arr.getJSONObject(i)
+                    val tmpl = com.altomedia.warkit.data.BranchBank.byId(o.getString("id"))
+                    state.branches.add(tmpl.copy(
+                        balance = o.optLong("balance"),
+                        reputation = o.optInt("reputation"),
+                        managerLevel = o.optInt("managerLevel"),
+                        totalIncome = o.optLong("totalIncome")
+                    ))
+                }
+            }
+            state.vehicleLevel = json.optInt("vehicleLevel", 0)
+            state.cashRegisterLevel = json.optInt("cashRegisterLevel", 1)
+            state.promotion = runCatching {
+                Promotion.valueOf(json.optString("promotion", "TIDAK_ADA"))
+            }.getOrDefault(Promotion.TIDAK_ADA)
+            state.promotionDaysLeft = json.optInt("promotionDaysLeft", 0)
+            state.competition.competitorActive = json.optBoolean("competitorActive", false)
+            state.competition.competitorStrength = json.optDouble("competitorStrength", 0.0).toFloat()
+            state.security.clear()
+            json.optJSONArray("security")?.let { arr ->
+                for (i in 0 until arr.length()) state.security.add(arr.getString(i))
+            }
+            state.seasonalEvent = runCatching {
+                SeasonalEvent.valueOf(json.optString("seasonalEvent", "NONE"))
+            }.getOrDefault(SeasonalEvent.NONE)
+            state.eventDaysLeft = json.optInt("eventDaysLeft", 0)
 
             savedAt
         } catch (e: Exception) {

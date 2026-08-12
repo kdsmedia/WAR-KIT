@@ -42,10 +42,11 @@ class CustomerSpawner(private val state: GameState) {
         val type = pickType()
         val unlocked = ProductCatalog.unlocked(state.level)
 
-        // Preferensi: tipe + waktu + cuaca (BAB 7, 18, 19)
+        // Preferensi: tipe + waktu + cuaca + event (BAB 7, 18, 19, 29, 30)
         val timePref = state.timeOfDay.preferredProducts()
         val weatherPref = state.weather.boostedProducts()
-        val preferred = (type.preferredProducts() + timePref + weatherPref).distinct()
+        val eventPref = state.seasonalEvent.hotProducts()
+        val preferred = (type.preferredProducts() + timePref + weatherPref + eventPref).distinct()
             .filter { id -> unlocked.any { it.id == id } && state.shelfHas(id) }
         val pool = if (preferred.isNotEmpty()) preferred else unlocked.map { it.id }
         if (pool.isEmpty()) return null
