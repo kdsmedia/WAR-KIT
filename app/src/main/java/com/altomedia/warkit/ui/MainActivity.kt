@@ -97,6 +97,7 @@ class MainActivity : AppCompatActivity() {
         btnBar.addView(actionBtn("🎯", "Misi", 0xFF43A047.toInt()) { openMissions() })
         btnBar.addView(actionBtn("🗺️", "Cabang", 0xFF00897B.toInt()) { openBranches() })
         btnBar.addView(actionBtn("⚙️", "Operasional", 0xFF5C6BC0.toInt()) { openOperations() })
+        btnBar.addView(actionBtn("💼", "Bisnis", 0xFF8D6E63.toInt()) { openBusiness() })
         btnBar.addView(actionBtn("📅", "Event", 0xFFE53935.toInt()) { openEvents() })
         val btnLp = FrameLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
@@ -191,14 +192,24 @@ class MainActivity : AppCompatActivity() {
     private fun openEvents() {
         EventDialog(this, state) { save.save(state) }.show()
     }
+    private fun openBusiness() {
+        BusinessDialog(this, state) { save.save(state) }.show()
+    }
 
     /** Trigger cutscene BAB 20 saat reputasi mencapai tier tertentu (sekali). */
     private var cutsceneShown = false
+    private var nationalCutsceneShown = false
     private fun maybeShowCutscene() {
-        if (cutsceneShown) return
-        if (state.reputation >= 700) {  // Warung Terkenal
+        if (!cutsceneShown && state.reputation >= 700) {  // Warung Terkenal
             cutsceneShown = true
             CutsceneDialog(this) {
+                save.save(state)
+            }.show()
+        }
+        // BAB 40: cutscene jaringan nasional saat level 20+ & >= 3 cabang
+        if (!nationalCutsceneShown && state.level >= 20 && state.branches.size >= 3) {
+            nationalCutsceneShown = true
+            NationalCutsceneDialog(this, state) {
                 save.save(state)
             }.show()
         }

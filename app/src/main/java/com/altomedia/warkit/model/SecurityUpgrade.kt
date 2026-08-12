@@ -27,12 +27,14 @@ enum class SeasonalEvent(
 ) {
     NONE("Biasa", "📅", 1.0f, 1.0f, 0.0f),
     RAMADHAN("Ramadhan", "🌙", 1.3f, 1.1f, 0.03f),
-    LEBARAN("Lebaran", "🕌", 1.6f, 1.3f, 0.08f);
+    LEBARAN("Lebaran", "🕌", 1.6f, 1.3f, 0.08f),
+    FESTIVAL("Festival Belanja", "🎉", 1.8f, 1.2f, 0.10f);
 
-    /** Produk terlaris saat event (BAB 29 & 30). */
+    /** Produk terlaris saat event (BAB 29, 30, 38). */
     fun hotProducts(): List<String> = when (this) {
         RAMADHAN -> listOf("sirup", "kurma", "minyak", "gula", "tepung", "mi_instan", "susu")
         LEBARAN  -> listOf("sirup", "kurma", "kue_lebaran", "gula", "minyak", "biskuit", "susu")
+        FESTIVAL -> listOf("biskuit", "permen", "sirup", "snack", "air", "susu")
         NONE     -> emptyList()
     }
 }

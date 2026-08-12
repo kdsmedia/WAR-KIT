@@ -15,8 +15,9 @@ enum class Vehicle(
 ) {
     MOTOR_BOX("Motor Box", "🏍️", 1.0f, 50,   5_000,  1, 0),
     PICKUP("Pickup",        "🛻", 1.4f, 120,  9_000,  5, 1_500_000),
-    TRUK_KECIL("Truk Kecil","🚚", 1.8f, 250, 15_000, 9, 4_000_000),
-    TRUK_BESAR("Truk Besar","🚛", 2.4f, 500, 22_000, 13, 10_000_000);
+    TRUK_KECIL("Truk Engkel","🚚", 1.8f, 250, 15_000, 9, 4_000_000),
+    TRUK_BESAR("Truk Box",  "🚛", 2.4f, 500, 22_000, 13, 10_000_000),
+    TRAILER("Trailer",      "🚛💨", 3.2f, 1000, 30_000, 17, 25_000_000);
 
     companion object {
         fun at(ordinal: Int): Vehicle = entries.getOrElse(ordinal) { MOTOR_BOX }

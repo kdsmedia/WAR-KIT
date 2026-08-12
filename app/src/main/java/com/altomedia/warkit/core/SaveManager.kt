@@ -9,6 +9,7 @@ import com.altomedia.warkit.model.SeasonalEvent
 import com.altomedia.warkit.model.SellerCharacter
 import com.altomedia.warkit.model.Supplier
 import com.altomedia.warkit.model.TimeOfDay
+import com.altomedia.warkit.model.TrainingType
 import com.altomedia.warkit.model.Vehicle
 import com.altomedia.warkit.model.Weather
 import org.json.JSONArray
@@ -96,6 +97,24 @@ class SaveManager(context: Context) {
             put("security", JSONArray().also { arr -> state.security.forEach { arr.put(it) } })
             put("seasonalEvent", state.seasonalEvent.name)
             put("eventDaysLeft", state.eventDaysLeft)
+
+            // BAB 31-40
+            put("investorActive", state.investorActive)
+            put("investorDaysElapsed", state.investorDaysElapsed)
+            put("investorDaysMet", state.investorDaysMet)
+            put("investorDealAccepted", state.investorDealAccepted)
+            put("investorIncomeMult", state.investorIncomeMult)
+            put("investorConstructionDiscount", state.investorConstructionDiscount)
+            put("grosirUnlocked", state.grosirUnlocked)
+            put("distWarehouseLevel", state.distWarehouseLevel)
+            put("cityBranchesUnlocked", state.cityBranchesUnlocked)
+            put("buildingLevel", state.buildingLevel)
+            put("facilities", JSONArray().also { arr -> state.facilities.forEach { arr.put(it) } })
+            put("trainedEmployees", JSONObject().also { obj ->
+                state.trainedEmployees.forEach { (empId, list) ->
+                    obj.put(empId, JSONArray().also { arr -> list.forEach { arr.put(it.name) } })
+                }
+            })
         }
         prefs.edit().putString("state", json.toString()).putLong("savedAt", now).apply()
         state.lastSavedAt = now
@@ -207,6 +226,34 @@ class SaveManager(context: Context) {
                 SeasonalEvent.valueOf(json.optString("seasonalEvent", "NONE"))
             }.getOrDefault(SeasonalEvent.NONE)
             state.eventDaysLeft = json.optInt("eventDaysLeft", 0)
+
+            // BAB 31-40
+            state.investorActive = json.optBoolean("investorActive", false)
+            state.investorDaysElapsed = json.optInt("investorDaysElapsed", 0)
+            state.investorDaysMet = json.optInt("investorDaysMet", 0)
+            state.investorDealAccepted = json.optBoolean("investorDealAccepted", false)
+            state.investorIncomeMult = json.optDouble("investorIncomeMult", 1.0).toFloat()
+            state.investorConstructionDiscount = json.optDouble("investorConstructionDiscount", 0.0).toFloat()
+            state.grosirUnlocked = json.optBoolean("grosirUnlocked", false)
+            state.distWarehouseLevel = json.optInt("distWarehouseLevel", 0)
+            state.cityBranchesUnlocked = json.optBoolean("cityBranchesUnlocked", false)
+            state.buildingLevel = json.optInt("buildingLevel", 1)
+            state.facilities.clear()
+            json.optJSONArray("facilities")?.let { arr ->
+                for (i in 0 until arr.length()) state.facilities.add(arr.getString(i))
+            }
+            state.trainedEmployees.clear()
+            json.optJSONObject("trainedEmployees")?.let { obj ->
+                for (key in obj.keys()) {
+                    val arr = obj.getJSONArray(key)
+                    val list = mutableListOf<TrainingType>()
+                    for (i in 0 until arr.length()) {
+                        runCatching { TrainingType.valueOf(arr.getString(i)) }
+                            .getOrNull()?.let { list.add(it) }
+                    }
+                    state.trainedEmployees[key] = list
+                }
+            }
 
             savedAt
         } catch (e: Exception) {

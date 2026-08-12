@@ -218,6 +218,121 @@ class GameState {
     }
     fun endEvent() { seasonalEvent = SeasonalEvent.NONE; eventDaysLeft = 0 }
 
+    // === BAB 31: Investor ===
+    var investorActive: Boolean = false
+    var investorDaysElapsed: Int = 0
+    var investorDaysMet: Int = 0
+    var investorDealAccepted: Boolean = false
+    var investorIncomeMult: Float = 1f
+    var investorConstructionDiscount: Float = 0f
+    var investorTargetDailyIncome: Long = 1_000_000
+    var investorTargetCustomers: Int = 100
+    var investorTargetReputation: Int = 50
+    fun startInvestor(): Boolean {
+        if (investorActive || investorDealAccepted) return false
+        investorActive = true; investorDaysElapsed = 0; investorDaysMet = 0
+        return true
+    }
+    /** Cek harian target investor (dipanggil di advanceDay). */
+    fun tickInvestor(dailyIncome: Long, dailyCustomers: Int) {
+        if (!investorActive) return
+        investorDaysElapsed++
+        val met = dailyIncome >= investorTargetDailyIncome &&
+            dailyCustomers >= investorTargetCustomers &&
+            reputation >= investorTargetReputation
+        if (met) investorDaysMet++
+        if (investorDaysElapsed >= 30) {
+            // Selesai: terima deal jika memenuhi >= 80% hari
+            if (investorDaysMet >= 24) acceptInvestorDeal()
+            investorActive = false
+        }
+    }
+    private fun acceptInvestorDeal() {
+        investorDealAccepted = true
+        investorIncomeMult = 1.25f
+        investorConstructionDiscount = 0.15f
+        money += 10_000_000  // tambahan modal
+        reputation += 20
+    }
+
+    // === BAB 32: Toko Grosir ===
+    var grosirUnlocked: Boolean = false
+    var grosirCustomersToday: Int = 0
+    fun unlockGrosir(): Boolean {
+        if (grosirUnlocked || level < 12) return false
+        grosirUnlocked = true; return true
+    }
+    /** Pendapatan grosir harian (pembeli grosir belanja besar). */
+    fun grosirDailyIncome(): Long {
+        if (!grosirUnlocked) return 0
+        val base = 200_000L * (warehouseLevel)
+        return (base * investorIncomeMult).toLong()
+    }
+
+    // === BAB 33/34: Logistik & gudang distribusi ===
+    var distWarehouseLevel: Int = 0
+    fun upgradeDistWarehouse(): Boolean {
+        val cost = 3_000_000L * (distWarehouseLevel + 1)
+        if (money < cost) return false
+        money -= cost; distWarehouseLevel++
+        return true
+    }
+    fun distCapacity(): Int = 500 * (distWarehouseLevel + 1)
+    fun distSpeed(): Float = 1f + (distWarehouseLevel * 0.2f)
+
+    // === BAB 35: Kota (biaya operasional lebih tinggi) ===
+    var cityBranchesUnlocked: Boolean = false
+    fun cityMultiplier(): Float = if (cityBranchesUnlocked) 1.5f else 1f
+
+    // === BAB 36: Pajak & biaya operasional ===
+    fun dailyTax(): Long {
+        val baseTax = (sessionIncome / 100) * 5  // ~5% pendapatan
+        val cityTax = (baseTax * cityMultiplier()).toLong()
+        val branchTax = branches.size * 50_000L
+        return cityTax + branchTax
+    }
+
+    // === BAB 37: Pelatihan pegawai ===
+    val trainedEmployees: MutableMap<String, MutableList<com.altomedia.warkit.model.TrainingType>> = mutableMapOf()
+    fun trainEmployee(empId: String, t: com.altomedia.warkit.model.TrainingType): Boolean {
+        if (money < t.cost) return false
+        money -= t.cost
+        trainedEmployees.getOrPut(empId) { mutableListOf() }.add(t)
+        return true
+    }
+    fun trainingSpeedBoost(): Float = trainedEmployees.values.flatten()
+        .sumOf { it.speedBoost.toDouble() }.toFloat()
+    fun trainingSatisfactionBonus(): Int =
+        trainedEmployees.values.flatten().sumOf { it.satisfactionBoost }
+    fun trainingEfficiencyBonus(): Int =
+        trainedEmployees.values.flatten().sumOf { it.efficiencyBoost }
+    fun trainingIncomeMult(): Float = 1f + trainedEmployees.values.flatten()
+        .sumOf { it.incomeBoost.toDouble() }.toFloat()
+
+    // === BAB 39: Bangunan & fasilitas ===
+    var buildingLevel: Int = 1
+    fun building(): com.altomedia.warkit.model.BuildingLevel =
+        com.altomedia.warkit.model.BuildingLevel.at(buildingLevel)
+    fun upgradeBuilding(): Boolean {
+        val next = com.altomedia.warkit.model.BuildingLevel.entries.getOrNull(buildingLevel) ?: return false
+        val cost = (next.upgradeCost * (1f - investorConstructionDiscount)).toLong()
+        if (level < next.unlockLevel || money < cost) return false
+        money -= cost; buildingLevel++
+        reputation += next.reputationBoost
+        return true
+    }
+    val facilities: MutableList<String> = mutableListOf()
+    fun buyFacility(id: String): Boolean {
+        if (facilities.contains(id)) return false
+        val f = com.altomedia.warkit.data.FacilityBank.byId(id)
+        if (level < f.unlockLevel || money < f.cost) return false
+        money -= f.cost; facilities.add(id); reputation += f.reputationBoost
+        return true
+    }
+    fun facilityComfort(): Float = facilities.fold(0f) { acc, id ->
+        acc + com.altomedia.warkit.data.FacilityBank.byId(id).comfortBoost
+    }
+
     /** Tier reputasi saat ini (BAB 17). */
     fun reputationTier(): ReputationTier = ReputationTier.at(
         reputation + decorationReputation()
@@ -288,11 +403,12 @@ class GameState {
         // Efisiensi pegawai mengurangi biaya -> menambah margin (BAB 11)
         val effBonus = 1f + (employeeEfficiency() / 100f)
         // BAB 26: promosi menaikkan nilai belanja & mengurangi margin
-        val billMult = promotion.billMult * seasonalEvent.billMult
+        val billMult = promotion.billMult * seasonalEvent.billMult * building().transactionMult
         val profitPenalty = promotion.profitPenalty
         val totalBill = (c.bill * billMult).toInt()
-        val baseProfit = (totalBill * profitMult * effBonus * (1f - profitPenalty)).toInt()
-        val satisfactionBonus = c.satisfactionBonus()
+        val baseProfit = (totalBill * profitMult * effBonus * (1f - profitPenalty) *
+            investorIncomeMult * trainingIncomeMult()).toInt()
+        val satisfactionBonus = c.satisfactionBonus() + trainingSatisfactionBonus()
         var earned = baseProfit + satisfactionBonus * 500
 
         money += earned
@@ -539,6 +655,20 @@ class GameState {
             competition.competitorStrength = 0.3f
         }
         competition.playerShopScore = playerShopScore()
+        // BAB 32: pendapatan grosir harian
+        val grosirEarn = grosirDailyIncome()
+        if (grosirEarn > 0) {
+            money += grosirEarn
+            sessionIncome += grosirEarn
+        }
+        // BAB 35: kota terbuka di level 14
+        if (level >= 14) cityBranchesUnlocked = true
+        // BAB 36: bayar pajak & biaya operasional harian
+        val tax = dailyTax()
+        if (tax > 0) money -= tax
+        // BAB 31: cek target investor harian
+        tickInvestor(dailyIncome = (sessionIncome / day.coerceAtLeast(1)),
+            dailyCustomers = customersServedToday)
         checkDailyReset()
     }
 

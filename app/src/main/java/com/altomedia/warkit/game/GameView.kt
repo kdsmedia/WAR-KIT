@@ -228,6 +228,7 @@ class GameView @JvmOverloads constructor(
 
     private fun drawHUD(canvas: Canvas, s: GameState) {
         val w = width.toFloat()
+        val h = height.toFloat()
         // Background HUD atas
         val hudPaint = Paint().apply { shader = hudBg }
         canvas.drawRect(0f, 0f, w, 90f, hudPaint)
@@ -283,6 +284,26 @@ class GameView @JvmOverloads constructor(
         val status = if (s.shopOpen) "WARUNG BUKA" else "WARUNG TUTUP"
         textBold.color = if (s.shopOpen) Color.parseColor("#A5D6A7") else Color.parseColor("#EF9A9A")
         canvas.drawText(status, w - 120f, 50f, textBold)
+        // BAB 39: level bangunan
+        textSmall.color = Color.parseColor("#6D4C41"); textSmall.textSize = 12f
+        canvas.drawText("${s.building().emoji} ${s.building().displayName}", 12f, h - 100f, textSmall)
+        // BAB 31: status investor
+        if (s.investorActive) {
+            textSmall.color = Color.parseColor("#F9A825")
+            canvas.drawText("🤝 Investor: hari ${s.investorDaysElapsed}/30 (${s.investorDaysMet}✓)",
+                12f, h - 80f, textSmall)
+        } else if (s.investorDealAccepted) {
+            textSmall.color = Color.parseColor("#43A047")
+            canvas.drawText("🤝 Investor: deal aktif (x${s.investorIncomeMult})",
+                12f, h - 80f, textSmall)
+        }
+        // BAB 32: status grosir
+        if (s.grosirUnlocked) {
+            textSmall.color = Color.parseColor("#1565C0")
+            canvas.drawText("📦 Grosir: +Rp${s.grosirDailyIncome()}/hari",
+                12f, h - 60f, textSmall)
+        }
+        textSmall.color = Color.parseColor("#5D4037"); textSmall.textSize = 18f
         textBold.color = Color.WHITE
     }
 
