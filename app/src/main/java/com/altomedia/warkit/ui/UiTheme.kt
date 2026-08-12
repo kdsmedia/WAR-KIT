@@ -37,7 +37,7 @@ object UiTheme {
         Button(ctx).apply {
             this.text = text
             setTextColor(Color.WHITE)
-            typeface = Typeface.DEFAULT_BOLD
+            typeface = Fonts.button()
             textSize = 14f
             setBackgroundResource(R.drawable.btn_primary)
             setOnClickListener { onClick() }
@@ -48,18 +48,18 @@ object UiTheme {
         Button(ctx).apply {
             this.text = text
             setTextColor(Color.parseColor("#B8523A"))
-            typeface = Typeface.DEFAULT_BOLD
+            typeface = Fonts.button()
             textSize = 14f
             setBackgroundResource(R.drawable.btn_secondary)
             setOnClickListener { onClick() }
         }
 
-    /** Judul popup modern (teks besar bold, aksen oranye). */
+    /** Judul popup modern (teks besar Lilita One, aksen oranye). */
     fun title(ctx: Context, t: String): TextView = TextView(ctx).apply {
         text = t
         textSize = 20f
         setTextColor(Color.parseColor("#B8523A"))
-        typeface = Typeface.DEFAULT_BOLD
+        typeface = Fonts.title()
         gravity = Gravity.CENTER
         setPadding(0, 10, 0, 14)
     }
@@ -69,15 +69,16 @@ object UiTheme {
         text = t
         textSize = 15f
         setTextColor(Color.parseColor("#E76F51"))
-        typeface = Typeface.DEFAULT_BOLD
+        typeface = Fonts.title()
         setPadding(0, 14, 0, 6)
     }
 
-    /** Baris info modern (cokelat gelap). */
+    /** Baris info modern (Baloo 2, cokelat gelap). */
     fun info(ctx: Context, t: String): TextView = TextView(ctx).apply {
         text = t
         textSize = 13f
         setTextColor(Color.parseColor("#5D4037"))
+        typeface = Fonts.body()
         setPadding(4, 4, 4, 4)
     }
 

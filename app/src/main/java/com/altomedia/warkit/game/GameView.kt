@@ -55,14 +55,20 @@ class GameView @JvmOverloads constructor(
     private var hudShader: Shader? = null
 
     init {
+        // Font: judul/angka = Lilita One, teks/deskripsi = Baloo 2
+        val tfTitle = try { com.altomedia.warkit.ui.Fonts.title() } catch (_: Exception) { null }
+        val tfBody = try { com.altomedia.warkit.ui.Fonts.body() } catch (_: Exception) { null }
         wallPaint.color = Color.parseColor("#FFF3E0")
         textPaint.color = Color.parseColor("#3E2C1C")
         textPaint.textSize = 28f
+        textPaint.typeface = tfTitle
         textSmall.color = Color.parseColor("#5D4037")
         textSmall.textSize = 18f
+        textSmall.typeface = tfBody
         textBold.color = Color.WHITE
         textBold.textSize = 26f
         textBold.isFakeBoldText = true
+        textBold.typeface = tfTitle
         panelPaint.color = Color.parseColor("#FFF8E7")
         panelPaint.alpha = 235
         shelfWood.color = Color.parseColor("#A1887F")

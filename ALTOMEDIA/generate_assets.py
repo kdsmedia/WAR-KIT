@@ -29,7 +29,22 @@ TEXT_BROWN = (93, 64, 55)
 HUD_BG = (255, 248, 235)
 WHITE = (255, 255, 255)
 
-def font(size, bold=True):
+_HERE = os.path.dirname(os.path.abspath(__file__))
+FONT_DIR = os.path.abspath(os.path.join(_HERE, "..", "app", "src", "main", "assets", "fonts"))
+
+def _font_path(name):
+    return os.path.join(FONT_DIR, name)
+
+def font(size, bold=True, kind="body"):
+    """kind: 'title' (Lilita One), 'button' (Fredoka Bold), 'body' (Baloo 2)."""
+    mapping = {
+        "title": _font_path("lilita_one.ttf"),
+        "button": _font_path("fredoka_bold.ttf"),
+        "body": _font_path("baloo_2.ttf"),
+    }
+    p = mapping.get(kind)
+    if p and os.path.exists(p):
+        return ImageFont.truetype(p, size)
     paths = [
         "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf" if bold else "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
         "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
@@ -154,8 +169,8 @@ def gen_feature_graphic():
     # Warung utama besar di tengah
     draw_warung_building(d, 360, 180, 300, 200, scale=2.0)
     # Judul
-    f_big = font(110, bold=True)
-    f_small = font(42, bold=True)
+    f_big = font(110, bold=True, kind="title")
+    f_small = font(42, bold=True, kind="body")
     title = "WARKIT"
     bbox = d.textbbox((0, 0), title, font=f_big)
     tw = bbox[2] - bbox[0]
@@ -167,7 +182,7 @@ def gen_feature_graphic():
     sw = bbox[2] - bbox[0]
     d.text((512 - sw//2, 155), sub, fill=TEXT_DARK, font=f_small)
     # Tagline bawah
-    f_tag = font(28, bold=False)
+    f_tag = font(28, bold=False, kind="body")
     tag = "Bangun warung kecil menjadi jaringan terbesar di Indonesia"
     bbox = d.textbbox((0, 0), tag, font=f_tag)
     tw2 = bbox[2] - bbox[0]
@@ -194,9 +209,9 @@ def gen_screenshot(num, title, desc, accent):
     # Logo kecil
     d.ellipse([60, 60, 160, 160], fill=ROOF)
     draw_warung_building(d, 70, 75, 80, 75, scale=0.8)
-    f_logo = font(56, bold=True)
+    f_logo = font(56, bold=True, kind="title")
     d.text((190, 80), "WARKIT", fill=WHITE, font=f_logo)
-    f_sub = font(28, bold=False)
+    f_sub = font(28, bold=False, kind="body")
     d.text((190, 148), "Idle Warung Indonesia", fill=WHITE, font=f_sub)
     # Frame game landscape (16:9) di tengah
     fx, fy, fw, fh = 80, 280, 920, 518
@@ -209,7 +224,7 @@ def gen_screenshot(num, title, desc, accent):
     d.rectangle([fx, fy, fx+fw, fy+fh-120], fill=(255, 248, 235))
     # HUD atas
     d.rectangle([fx, fy, fx+fw, fy+70], fill=HUD_BG)
-    f_hud = font(26, bold=True)
+    f_hud = font(26, bold=True, kind="title")
     d.text((fx+20, fy+18), "Rp 12.500.000", fill=TEXT_DARK, font=f_hud)
     d.text((fx+fw//2-60, fy+18), "Hari 5", fill=TEXT_BROWN, font=f_hud)
     d.text((fx+fw-200, fy+18), "Reputasi: 350", fill=GOLD, font=f_hud)
@@ -246,12 +261,12 @@ def gen_screenshot(num, title, desc, accent):
         d.rounded_rectangle([bx, fy+fh-110, bx+bw-20, fy+fh-20], radius=12, fill=c)
     # --- Akhir mockup ---
     # Judul fitur di bawah mockup
-    f_title = font(64, bold=True)
+    f_title = font(64, bold=True, kind="title")
     bbox = d.textbbox((0, 0), title, font=f_title)
     tw = bbox[2] - bbox[0]
     d.text((540 - tw//2, 870), title, fill=accent, font=f_title)
     # Deskripsi
-    f_desc = font(36, bold=False)
+    f_desc = font(36, bold=False, kind="body")
     # Wrap text manual
     words = desc.split()
     lines = []
@@ -273,7 +288,7 @@ def gen_screenshot(num, title, desc, accent):
         d.text((540 - lw//2, y), line, fill=TEXT_DARK, font=f_desc)
         y += 52
     # Point list di bawah
-    f_pt = font(34, bold=True)
+    f_pt = font(34, bold=True, kind="body")
     points = {
         1: ["Layani pelanggan & naikkan reputasi", "Kelola 50+ produk warung", "Rekrut & latih pegawai", "Buka cabang ke 10 provinsi"],
         2: ["Program member Silver/Gold/Platinum", "Pembayaran QRIS & Dompet Digital", "Pusat distribusi nasional", "Hadapi kompetitor nasional"],
@@ -298,7 +313,7 @@ def gen_promo():
     img = Image.new("RGB", (180, 120), WARM_BG)
     d = ImageDraw.Draw(img)
     draw_warung_building(d, 30, 30, 120, 80, scale=0.7)
-    f = font(20, bold=True)
+    f = font(20, bold=True, kind="body")
     d.text((55, 96), "WARKIT", fill=ROOF, font=f)
     img.save(os.path.join(OUT, "promo_graphic_180x120.png"))
     print("OK promo_graphic_180x120.png")

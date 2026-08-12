@@ -28,6 +28,7 @@ class CircleButton(
     }
     private val labelPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.WHITE; textSize = 11f; textAlign = Paint.Align.CENTER
+        typeface = try { com.altomedia.warkit.ui.Fonts.button() } catch (_: Exception) { null }
     }
     private var pressed = false
     private var iconBmp: android.graphics.Bitmap? = null

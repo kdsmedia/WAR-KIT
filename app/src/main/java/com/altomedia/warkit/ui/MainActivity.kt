@@ -39,6 +39,9 @@ class MainActivity : AppCompatActivity() {
         state = GameState()
         save = SaveManager(this)
 
+        // Inisialisasi Typeface (Lilita One / Fredoka Bold / Baloo 2) sebelum view
+        Fonts.init(this)
+
         gameView = GameView(this)
         engine = GameEngine(state)
         gameView.state = state
