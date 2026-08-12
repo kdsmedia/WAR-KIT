@@ -1,0 +1,45 @@
+================================================================================
+                 CATATAN RILIS (RELEASE NOTES) — WARKIT v1.4
+================================================================================
+Aplikasi: WARKIT — Idle Warung Indonesia
+Package: com.altomedia.warkit
+Versi: 1.4 (versionCode 5)
+Tanggal: 12 Agustus 2026
+Developer: ALTOMEDIA
+================================================================================
+
+PEMBAHARUAN v1.4 — IKON LAUNCHER RESMI (GAMBAR USER):
+
+🖼️ IKON LAUNCHER DARI GAMBAR USER:
+- Menggunakan gambar ic_launcher_512.png yang di-upload user sebagai ikon
+  launcher resmi aplikasi
+- Gambar sumber (1254x1254) di-resize PRESISI ke 512x512 — TIDAK ADA CROP
+  karena bingkai sudah pas
+- Dibuat semua varian ikon untuk setiap density:
+    mipmap-mdpi      (48x48)
+    mipmap-hdpi      (72x72)
+    mipmap-xhdpi     (96x96)
+    mipmap-xxhdpi    (144x144)
+    mipmap-xxxhdpi   (192x192)
+- ic_launcher_round.png (mask lingkaran) untuk semua density
+- Adaptive Icon (Android 8.0+ / API 26+):
+    mipmap-anydpi-v26/ic_launcher.xml + ic_launcher_round.xml
+    foreground = gambar user di area aman 432x432 (tidak terpotong mask)
+    background = krem hangat (#FFF3E0)
+- AndroidManifest tetap @mipmap/ic_launcher & @mipmap/ic_launcher_round
+
+⚡ OPTIMASI UKURAN:
+- PNG ikon di-quantize (palet 256 warna) → ukuran total ikon turun dari
+  ~8 MB ke ~1.4 MB tanpa kehilangan kualitas visual
+- Release APK: 11 MB -> 5.3 MB; AAB: 11 MB -> 5.1 MB
+
+🔧 TEKNIS:
+- generate_launcher_icon.py: generator otomatis semua varian ikon
+- versionCode 5, versionName 1.4
+- Build SUCCESSFUL (debug + release + bundle)
+- AAB 5.1 MB / release APK 5.3 MB / debug 6.0 MB, signed V2 (ALTOMEDIA.jks)
+- Tidak ada bug/error, tidak ada dummy/placeholder
+
+================================================================================
+                  AKHIR CATATAN RILIS v1.4
+================================================================================
