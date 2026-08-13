@@ -19,10 +19,14 @@ object Fonts {
     @Volatile private var body: Typeface? = null       // Baloo 2 Regular
 
     fun init(ctx: Context) {
-        if (title == null) title = Typeface.createFromAsset(ctx.assets, "fonts/lilita_one.ttf")
-        if (button == null) button = Typeface.createFromAsset(ctx.assets, "fonts/fredoka_bold.ttf")
-        if (body == null) body = Typeface.createFromAsset(ctx.assets, "fonts/baloo_2.ttf")
+        if (title == null) title = load(ctx, "fonts/lilita_one.ttf", Typeface.DEFAULT)
+        if (button == null) button = load(ctx, "fonts/fredoka_bold.ttf", Typeface.DEFAULT_BOLD)
+        if (body == null) body = load(ctx, "fonts/baloo_2.ttf", Typeface.DEFAULT)
     }
+
+    private fun load(ctx: Context, path: String, fallback: Typeface): Typeface =
+        try { Typeface.createFromAsset(ctx.assets, path) ?: fallback }
+        catch (_: Throwable) { fallback }
 
     /** Lilita One — judul game & angka/koin. */
     fun title(): Typeface = title ?: Typeface.DEFAULT

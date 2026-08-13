@@ -33,6 +33,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var save: SaveManager
     private var music: MusicManager? = null
 
+    private companion object {
+        const val ACTION_BTN_SIZE = 132
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -106,20 +110,19 @@ class MainActivity : AppCompatActivity() {
         val btnBar = LinearLayout(this).apply {
             orientation = LinearLayout.HORIZONTAL
         }
-        val btnSize = 132
-        btnBar.addView(actionBtn("🏪", "Gudang", 0xFFE76F51.toInt(), "warehouse") { openWarehouse() }, btnSize)
-        btnBar.addView(actionBtn("⬆️", "Upgrade", 0xFF6D4C41.toInt(), "upgrade") { openUpgrade() }, btnSize)
-        btnBar.addView(actionBtn("🧑‍💼", "Pegawai", 0xFF1E88E5.toInt(), "employees") { openEmployees() }, btnSize)
-        btnBar.addView(actionBtn("🎨", "Dekorasi", 0xFF8E24AA.toInt(), "decoration") { openDecorations() }, btnSize)
-        btnBar.addView(actionBtn("🛒", "Produk", 0xFFF4A261.toInt(), "products") { openProducts() }, btnSize)
-        btnBar.addView(actionBtn("🎯", "Misi", 0xFF43A047.toInt(), "missions") { openMissions() }, btnSize)
-        btnBar.addView(actionBtn("🗺️", "Cabang", 0xFF00897B.toInt(), "branches") { openBranches() }, btnSize)
-        btnBar.addView(actionBtn("⚙️", "Operasional", 0xFF5C6BC0.toInt(), "operations") { openOperations() }, btnSize)
-        btnBar.addView(actionBtn("💼", "Bisnis", 0xFF8D6E63.toInt(), "business") { openBusiness() }, btnSize)
-        btnBar.addView(actionBtn("📅", "Event", 0xFFE53935.toInt(), "events") { openEvents() }, btnSize)
-        btnBar.addView(actionBtn("🇮🇩", "Provinsi", 0xFF00ACC1.toInt(), "provinces") { openProvinces() }, btnSize)
-        btnBar.addView(actionBtn("💳", "Modern", 0xFFAB47BC.toInt(), "modern") { openModern() }, btnSize)
-        btnBar.addView(actionBtn("🏆", "Prestasi", 0xFFFFA000.toInt(), "achievements") { openAchievements() }, btnSize)
+        btnBar.addView(actionBtn("🏪", "Gudang", 0xFFE76F51.toInt(), "warehouse") { openWarehouse() })
+        btnBar.addView(actionBtn("⬆️", "Upgrade", 0xFF6D4C41.toInt(), "upgrade") { openUpgrade() })
+        btnBar.addView(actionBtn("🧑‍💼", "Pegawai", 0xFF1E88E5.toInt(), "employees") { openEmployees() })
+        btnBar.addView(actionBtn("🎨", "Dekorasi", 0xFF8E24AA.toInt(), "decoration") { openDecorations() })
+        btnBar.addView(actionBtn("🛒", "Produk", 0xFFF4A261.toInt(), "products") { openProducts() })
+        btnBar.addView(actionBtn("🎯", "Misi", 0xFF43A047.toInt(), "missions") { openMissions() })
+        btnBar.addView(actionBtn("🗺️", "Cabang", 0xFF00897B.toInt(), "branches") { openBranches() })
+        btnBar.addView(actionBtn("⚙️", "Operasional", 0xFF5C6BC0.toInt(), "operations") { openOperations() })
+        btnBar.addView(actionBtn("💼", "Bisnis", 0xFF8D6E63.toInt(), "business") { openBusiness() })
+        btnBar.addView(actionBtn("📅", "Event", 0xFFE53935.toInt(), "events") { openEvents() })
+        btnBar.addView(actionBtn("🇮🇩", "Provinsi", 0xFF00ACC1.toInt(), "provinces") { openProvinces() })
+        btnBar.addView(actionBtn("💳", "Modern", 0xFFAB47BC.toInt(), "modern") { openModern() })
+        btnBar.addView(actionBtn("🏆", "Prestasi", 0xFFFFA000.toInt(), "achievements") { openAchievements() })
         scroll.addView(btnBar)
         val scrollLp = FrameLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT, barHeight
@@ -147,15 +150,10 @@ class MainActivity : AppCompatActivity() {
         b.label = label
         b.setIconAsset(iconAsset)
         if (label == "Buka") openBtnRef = b
-        return b
-    }
-
-    private fun actionBtn(icon: String, label: String, color: Int, iconAsset: String, onClick: () -> Unit, size: Int): CircleButton {
-        val b = actionBtn(icon, label, color, iconAsset, onClick)
-        val lp = LinearLayout.LayoutParams(size, size).apply {
+        // Default square size + margins for the horizontal action bar.
+        b.layoutParams = LinearLayout.LayoutParams(ACTION_BTN_SIZE, ACTION_BTN_SIZE).apply {
             gravity = Gravity.CENTER; rightMargin = 10; leftMargin = 10
         }
-        b.layoutParams = lp
         return b
     }
 
